@@ -175,7 +175,7 @@ int main(int argc, char** argv)
 
     ros::AsyncSpinner spinner(1);
     spinner.start();
-//    ros::Duration(20).sleep();
+    ros::Duration(20).sleep();
 
     setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
     setupCameraStream_.request.start = 0;
