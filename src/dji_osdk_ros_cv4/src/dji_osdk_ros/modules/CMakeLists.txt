@@ -37,7 +37,7 @@ find_path(OPENCV_VIZ
 # Try to see if user has OpenCV installed
 # If there's version 3.3.0+, depth perception samples will be compiled
 # If it's not version 3.3.0+, the sample will not be compiled
-find_package(OpenCV 4.5)
+find_package(OpenCV 4)
 if (OpenCV_FOUND)
     message( "\n${PROJECT_NAME}...")
     message( STATUS "Found OpenCV ${OpenCV_VERSION} installed in the system, will use it for depth perception sample")
