@@ -1,0 +1,10 @@
+./CMakeLists.txt
+*.swn
+*.swo
+*.swp
+*sdk.launch
+build.sh
+.idea/
+.ccls-cache/
+.cache/
+compile_commands.json
