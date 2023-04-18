@@ -181,8 +181,8 @@ int main(int argc, char** argv)
     setupCameraStream_.request.start = 0;
     setup_camera_stream_client.call(setupCameraStream_);
 
-//    ROS_INFO_STREAM("Finished. Press CTRL-C to terminate the node");
-//    ros::waitForShutdown();
+    ROS_INFO_STREAM("Finished. Press CTRL-C to terminate the node");
+    ros::waitForShutdown();
 
     return 0;
 }
