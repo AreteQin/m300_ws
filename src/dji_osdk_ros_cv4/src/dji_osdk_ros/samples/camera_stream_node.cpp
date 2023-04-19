@@ -32,7 +32,7 @@ void fpvCameraStreamCallBack(const sensor_msgs::Image& msg)
   img.rawData = msg.data;
   img.height  = msg.height;
   img.width   = msg.width;
-  char Name[] = "FPV_CAM";
+//  char Name[] = "FPV_CAM";
 //  show_rgb(img, Name);
   std::cout<<"height is"<<msg.height<<std::endl;
   std::cout<<"width is"<<msg.width<<std::endl;
@@ -57,8 +57,8 @@ int main(int argc, char** argv)
     setupCameraStream_.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_);
 
-    ros::AsyncSpinner spinner(1);
-    spinner.start();
+//    ros::AsyncSpinner spinner(1);
+//    spinner.start();
 //    ros::Duration(20).sleep();
 //
 //    setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 //    setup_camera_stream_client.call(setupCameraStream_);
 //
 //    ROS_INFO_STREAM("Finished. Press CTRL-C to terminate the node");
-    ros::waitForShutdown();
+//    ros::waitForShutdown();
 
     return 0;
 }
