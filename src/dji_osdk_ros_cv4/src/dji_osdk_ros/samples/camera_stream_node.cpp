@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     dji_osdk_ros::SetupCameraStream setupCameraStream_;
 
     setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
-    setupCameraStream_.request.start = 0;
+    setupCameraStream_.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_);
 
 //    ros::AsyncSpinner spinner(1);
