@@ -53,7 +53,7 @@ int main(int argc, char** argv)
     auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
     dji_osdk_ros::SetupCameraStream setupCameraStream_;
 
-    setupCameraStream_.request.cameraType = setupCameraStream_.request.;
+    setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
     setupCameraStream_.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_);
 
