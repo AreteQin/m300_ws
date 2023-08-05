@@ -61,9 +61,9 @@ int main(int argc, char** argv)
 //    spinner.start();
 //    ros::Duration(20).sleep();
 //
-//    setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
-//    setupCameraStream_.request.start = 0;
-//    setup_camera_stream_client.call(setupCameraStream_);
+    setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
+    setupCameraStream_.request.start = 0;
+    setup_camera_stream_client.call(setupCameraStream_);
 //
 //    ROS_INFO_STREAM("Finished. Press CTRL-C to terminate the node");
 //    ros::waitForShutdown();
