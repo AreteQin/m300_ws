@@ -38,6 +38,18 @@ void fpvCameraStreamCallBack(const sensor_msgs::Image& msg)
   std::cout<<"width is"<<msg.width<<std::endl;
 }
 
+void mainCameraStreamCallBack(const sensor_msgs::Image& msg)
+{
+    CameraRGBImage img;
+    img.rawData = msg.data;
+    img.height  = msg.height;
+    img.width   = msg.width;
+    char Name[] = "MAIN_CAM";
+    show_rgb(img, Name);
+    std::cout<<"height is"<<msg.height<<std::endl;
+    std::cout<<"width is"<<msg.width<<std::endl;
+}
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "camera_stream_node");
@@ -50,10 +62,13 @@ int main(int argc, char** argv)
 
     /*! RGB flow init */
     auto setup_camera_stream_client = nh.serviceClient<dji_osdk_ros::SetupCameraStream>("setup_camera_stream");
-    auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
+//    auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
+    auto main_camera_stream_sub = nh.subscribe("dji_osdk_ros/main_camera_images", 10, mainCameraStreamCallBack);
     dji_osdk_ros::SetupCameraStream setupCameraStream_;
 
-    setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
+    setupCameraStream_.request.cameraType = setupCameraStream_.request.MAIN_CAM;
+//    setupCameraStream_.request.cameraType = setupCameraStream_.request.FPV_CAM;
+
     setupCameraStream_.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_);
 
