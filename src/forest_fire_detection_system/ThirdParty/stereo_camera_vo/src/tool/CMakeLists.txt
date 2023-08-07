@@ -1,0 +1,15 @@
+add_library(
+  ${PROJECT_NAME}_tool
+  SHARED
+  viewer.cc
+  dataset_base.cc
+  kitti_dataset.cc
+  m300_dataset.cc
+  algorithm.cc
+  image_preprocess.cc
+)
+target_link_libraries(
+  ${PROJECT_NAME}_tool
+  ${PROJECT_NAME}_common
+  ${THIRD_PARTY_LIBS}
+)
