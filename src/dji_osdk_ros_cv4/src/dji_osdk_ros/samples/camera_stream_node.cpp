@@ -71,17 +71,18 @@ int main(int argc, char **argv) {
     setupCameraStream_main.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_main);
 
-    dji_osdk_ros::SetupCameraStream setupCameraStream_vice;
-    auto vice_camera_stream_sub = nh.subscribe("dji_osdk_ros/vice_camera_images", 10, mainCameraStreamCallBack);
-    setupCameraStream_vice.request.request_view = setupCameraStream_vice.request.VICE_CAMERA;
-    setupCameraStream_vice.request.start = 1;
-    setup_camera_stream_client.call(setupCameraStream_vice);
+    auto vice_camera_stream_sub = nh.subscribe("dji_osdk_ros/camera_h264_stream", 10, mainCameraStreamCallBack);
+    auto setup_camera_h264_client = nh.serviceClient<dji_osdk_ros::SetupCameraH264>("setup_camera_h264");
 
-    dji_osdk_ros::SetupCameraStream setupCameraStream_top;
-    auto top_camera_stream_sub = nh.subscribe("dji_osdk_ros/top_camera_images", 10, mainCameraStreamCallBack);
-    setupCameraStream_top.request.request_view = setupCameraStream_top.request.TOP_CAMERA;
-    setupCameraStream_top.request.start = 1;
-    setup_camera_stream_client.call(setupCameraStream_top);
+    dji_osdk_ros::SetupCameraH264 setupCameraH264_vice;
+    setupCameraH264_vice.request.request_view = setupCameraH264_vice.request.VICE_CAMERA;
+    setupCameraH264_vice.request.start        = 1;
+    setup_camera_h264_client.call(setupCameraH264_vice);
+
+    dji_osdk_ros::SetupCameraH264 setupCameraH264_top;
+    setupCameraH264_top.request.request_view = setupCameraH264_top.request.TOP_CAMERA;
+    setupCameraH264_top.request.start        = 1;
+    setup_camera_h264_client.call(setupCameraH264_top);
 
 //    ros::AsyncSpinner spinner(1);
 //    spinner.start();
