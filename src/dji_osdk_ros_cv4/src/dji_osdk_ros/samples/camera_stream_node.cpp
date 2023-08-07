@@ -73,13 +73,13 @@ int main(int argc, char **argv) {
 
     dji_osdk_ros::SetupCameraStream setupCameraStream_vice;
     auto vice_camera_stream_sub = nh.subscribe("dji_osdk_ros/vice_camera_images", 10, mainCameraStreamCallBack);
-    setupCameraStream_vice.request.cameraType = setupCameraStream_vice.request.VICE_CAMERA;
+    setupCameraStream_vice.request.request_view = setupCameraStream_vice.request.VICE_CAMERA;
     setupCameraStream_vice.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_vice);
 
     dji_osdk_ros::SetupCameraStream setupCameraStream_top;
     auto top_camera_stream_sub = nh.subscribe("dji_osdk_ros/top_camera_images", 10, mainCameraStreamCallBack);
-    setupCameraStream_top.request.cameraType = setupCameraStream_top.request.TOP_CAMERA;
+    setupCameraStream_top.request.request_view = setupCameraStream_top.request.TOP_CAMERA;
     setupCameraStream_top.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_top);
 
