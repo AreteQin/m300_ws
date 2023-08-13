@@ -22,28 +22,28 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -std=c++11 -O3 -fopenmp")
 
 # ros package
 find_package(
-  catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  roslib
-  tf2
-  tf2_ros
-  image_transport
-  dji_osdk_ros
-  geometry_msgs
-  sensor_msgs
-  pcl_ros
-  pcl_msgs
-  pcl_conversions
-  message_generation
-  nav_msgs
-  nmea_msgs
-  std_msgs
-  message_filters # for message_filter
+        catkin REQUIRED COMPONENTS
+        roscpp
+        rospy
+        roslib
+        tf2
+        tf2_ros
+        image_transport
+        dji_osdk_ros
+        geometry_msgs
+        sensor_msgs
+        pcl_ros
+        pcl_msgs
+        pcl_conversions
+        message_generation
+        nav_msgs
+        nmea_msgs
+        std_msgs
+        message_filters # for message_filter
 )
 include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
+        include
+        ${catkin_INCLUDE_DIRS}
 )
 
 # yaml
@@ -68,39 +68,56 @@ include_directories("/usr/include/eigen3")
 find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+# stereo_camera_vo
+include_directories("ThirdParty/stereo_camera_vo/include")
+link_directories("ThirdParty/stereo_camera_vo/lib")
+
 add_message_files(
-  FILES
-  SingleFireFuse.msg
-  SingleFireIR.msg
-  SingleFireRGB.msg
+        FILES
+        SingleFireFuse.msg
+        SingleFireIR.msg
+        SingleFireRGB.msg
 )
 
 add_service_files(
-  FILES
-  SegmentSmoke.srv
-  ToggleGrabDataDepthEstimation.srv
+        FILES
+        SegmentSmoke.srv
+        ToggleGrabDataDepthEstimation.srv
 )
 
 generate_messages(
-  DEPENDENCIES
-  std_msgs
+        DEPENDENCIES
+        std_msgs
 )
 
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS
-  roscpp
-  rospy
-  roslib
-  tf2
-  tf2_ros
-  std_msgs
-  dji_osdk_ros
-  geometry_msgs
-  nav_msgs
-  nmea_msgs
-  message_runtime
+        INCLUDE_DIRS include
+        LIBRARIES ${PROJECT_NAME}
+        CATKIN_DEPENDS
+        roscpp
+        rospy
+        roslib
+        tf2
+        tf2_ros
+        std_msgs
+        dji_osdk_ros
+        geometry_msgs
+        nav_msgs
+        nmea_msgs
+        message_runtime
+)
+
+set(VO_THIRD_PARTY_LIBS
+        ${OpenCV_LIBS}
+        ${Sophus_LIBRARIES}
+        ${Pangolin_LIBRARIES} GL GLU GLEW glut
+        g2o_core g2o_stuff g2o_types_sba g2o_solver_csparse g2o_csparse_extension
+        pthread
+        ${CSPARSE_LIBRARY}
+        fmt::fmt
+        stereo_camera_vo_common
+        stereo_camera_vo_module
+        stereo_camera_vo_tool
 )
 
 ###########
