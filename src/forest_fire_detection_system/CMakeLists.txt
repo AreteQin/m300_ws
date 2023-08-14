@@ -1,19 +1,3 @@
-# ------------------------------------------------------------------------------
-#
-#   Copyright (C) 2022 Concordia NAVlab. All rights reserved.
-#
-#   @Filename: CMakeLists.txt
-#
-#   @Author: Shun Li
-#
-#   @Date: 2022-03-18
-#
-#   @Email: 2015097272@qq.com
-#
-#   @Description:
-#
-# ------------------------------------------------------------------------------
-
 cmake_minimum_required(VERSION 2.8.3)
 project(forest_fire_detection_system)
 
