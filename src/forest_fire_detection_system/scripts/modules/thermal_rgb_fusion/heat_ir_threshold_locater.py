@@ -20,7 +20,7 @@
 import os
 import sys
 
-PKG_PATH = os.path.expanduser('~/M300_WS/src/forest_fire_detection_system/')
+PKG_PATH = os.path.expanduser('~/m300_ws/src/forest_fire_detection_system/')
 sys.path.append(PKG_PATH + 'scripts/')
 
 from tools.custom_logger import Log

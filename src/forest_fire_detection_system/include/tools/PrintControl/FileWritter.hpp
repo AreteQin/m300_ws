@@ -38,7 +38,7 @@ class FileWritter {
 
   void open() { oufile.open(fileName.c_str(), std::ios::app | std::ios::out); }
   void close() { oufile.close(); }
-  void setDelimiter(const std::string del) { delimiter = del; }
+//  void setDelimiter(const std::string del) { delimiter = del; }
   void erase() {
     /* NOTE: fstream has a constructor same as open, can open file when the
      * NOTE: instance!
