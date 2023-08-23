@@ -85,6 +85,12 @@ else()
 message(STATUS "Did not find OPENCV, camera stream node will not be compiled.")
 endif()
 
+add_executable(main_and_fpv_node main_and_fpv_node.cpp)
+target_link_libraries(main_and_fpv_node
+        ${PROJECT_NAME}
+        ${SDL2_LIB_DEPEND_FLAG}
+)
+
 add_executable(camera_h264_node camera_h264_node.cpp)
 target_link_libraries(camera_h264_node
         ${PROJECT_NAME}

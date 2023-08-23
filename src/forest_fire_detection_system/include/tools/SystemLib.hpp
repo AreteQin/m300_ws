@@ -1,19 +1,3 @@
-/*******************************************************************************
- *
- *   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
- *
- *   @Filename: SystemLib.hpp
- *
- *   @Author: Shun Li
- *
- *   @Email: 2015097272@qq.com
- *
- *   @Date: 2021-10-25
- *
- *   @Description:
- *
- ******************************************************************************/
-
 #ifndef INCLUDE_TOOLS_SYSTEMLIB_HPP_
 #define INCLUDE_TOOLS_SYSTEMLIB_HPP_
 
@@ -32,6 +16,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <glog/logging.h>
 
 namespace FFDS {
 namespace TOOLS {
@@ -64,7 +49,7 @@ T getParam(const YAML::Node& node, const std::string& paramName,
   T v;
   try {
     v = node[paramName].as<T>();
-    ROS_INFO_STREAM("Found parameter: " << paramName << ", value: " << v);
+    LOG(INFO)<<"Found parameter: " << paramName << ", value: " << v;
   } catch (std::exception e) {
     v = defaultValue;
     ROS_WARN_STREAM("Cannot find value for parameter: "

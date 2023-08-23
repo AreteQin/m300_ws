@@ -65,9 +65,8 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
             continue;
         }
         ros::spinOnce();
-
-        /* PRINT_DEBUG("Org mixed image shape: rows: %d, cols: %d", rawImg.rows, */
-        /*             rawImg.cols); */
+        PRINT_DEBUG("Org mixed image shape: rows: %d, cols: %d", rawImg.rows,
+                    rawImg.cols);
 
         cv::Mat irImg =
                 rawImg(cv::Rect(irUpLeft_x, irUpLeft_y, irImgWid, irImgHet));
