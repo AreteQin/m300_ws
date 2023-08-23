@@ -14,6 +14,7 @@ FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 }
 
 void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
+    LOG(INFO) << "In imageCallback()";
     try {
         rawImgPtr = cv_bridge::toCvCopy(img, "bgr8");
         rawImg = rawImgPtr->image;
@@ -54,7 +55,6 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
      * */
 
     while (ros::ok()) {
-        LOG(INFO) << "Before ROS spinOnce()";
         ros::spinOnce();
         LOG(INFO) << "After ROS spinOnce()";
         if (rawImg.empty()) {
