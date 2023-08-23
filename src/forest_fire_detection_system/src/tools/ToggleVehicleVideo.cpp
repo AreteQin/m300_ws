@@ -32,7 +32,6 @@ int main(int argc, char **argv) {
         LOG(INFO) << "start separate the ir and RGB image...";
 
         FFDS::MODULES::RGB_IRSeperator seperator;
-        LOG(INFO) << "start separate the ir and RGB image...";
         seperator.run();
         return 0;
 

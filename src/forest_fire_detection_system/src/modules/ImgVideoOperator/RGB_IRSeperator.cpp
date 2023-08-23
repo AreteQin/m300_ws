@@ -42,6 +42,17 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
     int rgbUpLeft_x = irImgWid;
     int rgbUpLeft_y = upperBound;
 
+    LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
+              << ", cols: " << rawImg.cols;
+    LOG(INFO) << "ir image position: rows: " << irUpLeft_x
+              << ", cols: " << irUpLeft_y;
+    LOG(INFO) << "ir image shape: rows: " << irImgWid
+              << ", cols: " << irImgHet;
+    LOG(INFO) << "rgb image position: rows: " << rgbUpLeft_x
+              << ", cols: " << rgbUpLeft_y;
+    LOG(INFO) << "rgb image shape: rows: " << rgbImgWid
+              << ", cols: " << rgbImgHet;
+
     /**
      * FIXED: the hh DJI change the video size after press the "RECORD" from the
      * FIXED: remoter! YOU GOT BE KIDDING ME!
@@ -51,17 +62,6 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
 
         /* PRINT_DEBUG("Org mixed image shape: rows: %d, cols: %d", rawImg.rows, */
         /*             rawImg.cols); */
-
-        LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
-                  << ", cols: " << rawImg.cols;
-        LOG(INFO) << "ir image position: rows: " << irUpLeft_x
-                  << ", cols: " << irUpLeft_y;
-        LOG(INFO) << "ir image shape: rows: " << irImgWid
-                  << ", cols: " << irImgHet;
-        LOG(INFO) << "rgb image position: rows: " << rgbUpLeft_x
-                  << ", cols: " << rgbUpLeft_y;
-        LOG(INFO) << "rgb image shape: rows: " << rgbImgWid
-                  << ", cols: " << rgbImgHet;
 
         cv::Mat irImg =
                 rawImg(cv::Rect(irUpLeft_x, irUpLeft_y, irImgWid, irImgHet));
