@@ -57,7 +57,7 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
      * FIXED: the hh DJI change the video size after press the "RECORD" from the
      * FIXED: remoter! YOU GOT BE KIDDING ME!
      * */
-    while (ros::ok()) {
+    while (ros::ok() && !rawImg.empty()) {
         ros::spinOnce();
 
         /* PRINT_DEBUG("Org mixed image shape: rows: %d, cols: %d", rawImg.rows, */
