@@ -14,11 +14,13 @@ FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 }
 
 void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
+    LOG(INFO) << "In imageCallback(0)";
     if (img->data.empty()) {
         LOG(WARNING) << "image data is empty!";
         return;
     }
     try {
+        LOG(INFO) << "In imageCallback(1)";
 //        rawImgPtr = cv_bridge::toCvCopy(img, "bgr8");
         rawImgPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
         LOG(INFO) << "In imageCallback(2)";
