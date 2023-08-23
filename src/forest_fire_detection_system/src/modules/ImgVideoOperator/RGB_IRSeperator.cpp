@@ -25,6 +25,7 @@ void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::Con
         LOG(ERROR) << e.what();
         ROS_ERROR("Could not convert from '%s' to 'rgb8'.", img->encoding.c_str());
     }
+    LOG(INFO) << "Out imageCallback()";
 }
 
 void FFDS::MODULES::RGB_IRSeperator::run() {
