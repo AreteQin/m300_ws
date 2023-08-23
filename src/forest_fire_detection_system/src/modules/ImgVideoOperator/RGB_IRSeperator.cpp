@@ -2,22 +2,27 @@
 #include <modules/ImgVideoOperator/RGB_IRSeperator.hpp>
 
 FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
-    imgSub = nh.subscribe("dji_osdk_ros/main_camera_images", 1,
-                          &RGB_IRSeperator::imageCallback, this);
-    imgIRPub =
-            it.advertise("forest_fire_detection_system/main_camera_ir_image", 1);
-    imgRGBPub =
-            it.advertise("forest_fire_detection_system/main_camera_rgb_image", 1);
-    resizeImgRGBPub = it.advertise(
-            "forest_fire_detection_system/main_camera_rgb_resize_image", 1);
+//    image_transport::ImageTransport it(nh);
+//    image_transport::Subscriber sub_color = it.subscribe("dji_osdk_ros/main_camera_images", 1,
+//                                                         &RGB_IRSeperator::imageCallback, this);
+    imgSub = nh.subscribe("dji_osdk_ros/main_camera_images", 1, &RGB_IRSeperator::imageCallback, this);
+    imgIRPub = it.advertise("forest_fire_detection_system/main_camera_ir_image", 1);
+    imgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_image", 1);
+    resizeImgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_resize_image", 1);
 
     ros::Duration(2.0).sleep();
 }
 
-void FFDS::MODULES::RGB_IRSeperator::imageCallback(
-        const sensor_msgs::Image::ConstPtr &img) {
-    rawImgPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
-    rawImg = rawImgPtr->image;
+void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
+    try {
+        rawImgPtr = cv_bridge::toCvCopy(img, "bgr8");
+        rawImg = rawImgPtr->image;
+//        cv::imshow("camera/main/image_raw", rawImg);
+//        cv::waitKey(1);
+    }
+    catch (cv_bridge::Exception &e) {
+        ROS_ERROR("Could not convert from '%s' to 'rgb8'.", img->encoding.c_str());
+    }
 }
 
 void FFDS::MODULES::RGB_IRSeperator::run() {
@@ -42,31 +47,29 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
     int rgbUpLeft_x = irImgWid;
     int rgbUpLeft_y = upperBound;
 
-    LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
-              << ", cols: " << rawImg.cols;
-    LOG(INFO) << "ir image position: rows: " << irUpLeft_x
-              << ", cols: " << irUpLeft_y;
-    LOG(INFO) << "ir image shape: rows: " << irImgWid
-              << ", cols: " << irImgHet;
-    LOG(INFO) << "rgb image position: rows: " << rgbUpLeft_x
-              << ", cols: " << rgbUpLeft_y;
-    LOG(INFO) << "rgb image shape: rows: " << rgbImgWid
-              << ", cols: " << rgbImgHet;
-
     /**
      * FIXED: the hh DJI change the video size after press the "RECORD" from the
      * FIXED: remoter! YOU GOT BE KIDDING ME!
      * */
 
     while (ros::ok()) {
+        ros::spinOnce();
         if (rawImg.empty()) {
             LOG(WARNING) << "raw image is empty!";
             ros::Duration(0.1).sleep();
             continue;
         }
-        ros::spinOnce();
-        PRINT_DEBUG("Org mixed image shape: rows: %d, cols: %d", rawImg.rows,
-                    rawImg.cols);
+
+//        LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
+//                  << ", cols: " << rawImg.cols;
+//        LOG(INFO) << "ir image position: rows: " << irUpLeft_x
+//                  << ", cols: " << irUpLeft_y;
+//        LOG(INFO) << "ir image shape: rows: " << irImgWid
+//                  << ", cols: " << irImgHet;
+//        LOG(INFO) << "rgb image position: rows: " << rgbUpLeft_x
+//                  << ", cols: " << rgbUpLeft_y;
+//        LOG(INFO) << "rgb image shape: rows: " << rgbImgWid
+//                  << ", cols: " << rgbImgHet;
 
         cv::Mat irImg =
                 rawImg(cv::Rect(irUpLeft_x, irUpLeft_y, irImgWid, irImgHet));
