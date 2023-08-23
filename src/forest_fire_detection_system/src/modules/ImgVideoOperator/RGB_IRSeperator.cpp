@@ -21,6 +21,7 @@ void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::Con
 //        cv::waitKey(1);
     }
     catch (cv_bridge::Exception &e) {
+        LOG(ERROR) << e.what();
         ROS_ERROR("Could not convert from '%s' to 'rgb8'.", img->encoding.c_str());
     }
 }
@@ -49,11 +50,13 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
 
     /**
      * FIXED: the hh DJI change the video size after press the "RECORD" from the
-     * FIXED: remoter! YOU GOT BE KIDDING ME!
+     * FIXED: remoter! YOU GOT BE KIDDING ME!                                                             Ciao: Really?
      * */
 
     while (ros::ok()) {
+        LOG(INFO) << "Before ROS spinOnce()";
         ros::spinOnce();
+        LOG(INFO) << "After ROS spinOnce()";
         if (rawImg.empty()) {
             LOG(WARNING) << "raw image is empty!";
             ros::Duration(0.1).sleep();
