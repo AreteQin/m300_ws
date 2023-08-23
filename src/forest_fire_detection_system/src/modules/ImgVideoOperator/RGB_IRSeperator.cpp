@@ -14,10 +14,12 @@ FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 }
 
 void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
-    LOG(INFO) << "In imageCallback()";
     try {
+        LOG(INFO) << "In imageCallback(1)";
         rawImgPtr = cv_bridge::toCvCopy(img, "bgr8");
+        LOG(INFO) << "In imageCallback(2)";
         rawImg = rawImgPtr->image;
+        LOG(INFO) << "In imageCallback(3)";
 //        cv::imshow("camera/main/image_raw", rawImg);
 //        cv::waitKey(1);
     }
