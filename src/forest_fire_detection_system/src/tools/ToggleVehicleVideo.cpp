@@ -45,12 +45,7 @@ int main(int argc, char **argv) {
         PRINT_INFO("start separate the ir and RGB image...");
 
         FFDS::MODULES::RGB_IRSeperator seperator;
-        try {
-            seperator.run();
-        } catch (cv::Exception &e) {
-            std::cerr << e.msg << std::endl; // output exception message
-        }
-
+        seperator.run();
         return 0;
 
     } else if (static_cast<std::string>(argv[1]) == "close") {

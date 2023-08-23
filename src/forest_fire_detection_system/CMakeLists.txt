@@ -3,6 +3,7 @@ project(forest_fire_detection_system)
 
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -std=c++11 -O0 -Wall -ggdb -fopenmp")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -std=c++11 -O3 -fopenmp")
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules) # Add elements to list
 
 # ros package
 find_package(
@@ -51,6 +52,11 @@ include_directories("/usr/include/eigen3")
 # OpenCV 4.5 
 find_package(OpenCV 4 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+
+# Glog
+find_package(Glog REQUIRED)
+include_directories(${GLOG_INCLUDE_DIRS})
+link_libraries(${GLOG_LIBRARIES})
 
 # stereo_camera_vo
 include_directories("ThirdParty/stereo_camera_vo/include")
