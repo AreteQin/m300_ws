@@ -1,17 +1,4 @@
-/*******************************************************************************
- *   Copyright (C) 2021 Concordia NAVlab. All rights reserved.
- *
- *   @Filename: ToggleVehicleVideo.cpp
- *
- *   @Author: Shun Li
- *
- *   @Email: 2015097272@qq.com
- *
- *   @Date: 2021-11-27
- *
- *   @Description:
- *
- *******************************************************************************/
+#include <glog/logging.h>
 #include <dji_osdk_ros/SetupCameraStream.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
@@ -42,9 +29,10 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        PRINT_INFO("start separate the ir and RGB image...");
+        LOG(INFO) << "start separate the ir and RGB image...";
 
         FFDS::MODULES::RGB_IRSeperator seperator;
+        LOG(INFO) << "start separate the ir and RGB image...";
         seperator.run();
         return 0;
 
