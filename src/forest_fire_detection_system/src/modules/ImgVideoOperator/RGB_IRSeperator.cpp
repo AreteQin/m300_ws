@@ -14,6 +14,10 @@ FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 }
 
 void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
+    if (img->data.empty()) {
+        LOG(WARNING) << "image data is empty!";
+        return;
+    }
     try {
 //        rawImgPtr = cv_bridge::toCvCopy(img, "bgr8");
         rawImgPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
