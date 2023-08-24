@@ -5,7 +5,7 @@ find_package(catkin REQUIRED COMPONENTS rosconsole sensor_msgs)
 
 if(NOT ANDROID)
   find_package(PythonLibs)
-#  if(PYTHONLIBS_VERSION_STRING VERSION_LESS 3)
+#  if(PYTHONLIBS_VERSION_STRING VERSION_LESS 3) # fixed for "Could not find boost_python3"
     find_package(Boost REQUIRED python)
 #  else()
 #    find_package(Boost REQUIRED python3)
