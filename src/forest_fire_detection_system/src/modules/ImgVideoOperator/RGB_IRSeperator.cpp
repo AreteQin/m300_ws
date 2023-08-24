@@ -2,30 +2,10 @@
 #include <modules/ImgVideoOperator/RGB_IRSeperator.hpp>
 #include <dji_camera_image.hpp>
 
-void show_rgb(CameraRGBImage img, char *name) {
-    std::cout << "#### Got image from:\t" << std::string(name) << std::endl;
-    cv::Mat mat(img.height, img.width, CV_8UC3, img.rawData.data(), img.width * 3);
-    cvtColor(mat, mat, cv::COLOR_RGB2BGR);
-    imshow(name, mat);
-    cv::waitKey(1);
-}
-
-void mainCameraStreamCallBack(const sensor_msgs::Image &msg) {
-    CameraRGBImage img;
-    img.rawData = msg.data;
-    img.height = msg.height;
-    img.width = msg.width;
-    char Name[] = "MAIN_CAM";
-    show_rgb(img, Name);
-    std::cout << "height is" << msg.height << std::endl;
-    std::cout << "width is" << msg.width << std::endl;
-}
-
 FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 //    image_transport::ImageTransport it(nh);
-//    image_transport::Subscriber sub_color = it.subscribe("dji_osdk_ros/main_camera_images", 1,
-//                                                         &RGB_IRSeperator::imageCallback, this);
-    imgSub = nh.subscribe("dji_osdk_ros/main_camera_images", 1, &mainCameraStreamCallBack);
+    image_transport::Subscriber sub_color = it.subscribe("dji_osdk_ros/main_camera_images", 1,
+                                                         &RGB_IRSeperator::imageCallback, this);
     imgIRPub = it.advertise("forest_fire_detection_system/main_camera_ir_image", 1);
     imgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_image", 1);
     resizeImgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_resize_image", 1);
@@ -34,28 +14,8 @@ FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 }
 
 void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
-    LOG(INFO) << "In imageCallback(0)";
-    if (img->data.empty()) {
-        LOG(WARNING) << "image data is empty!";
-        return;
-    } else {
-        LOG(INFO) << img->data.size();
-    }
-    try {
-        LOG(INFO) << "In imageCallback(1)";
-//        rawImgPtr = cv_bridge::toCvCopy(img, "bgr8");
         rawImgPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
-        LOG(INFO) << "In imageCallback(2)";
         rawImg = rawImgPtr->image;
-        LOG(INFO) << "In imageCallback(3)";
-//        cv::imshow("camera/main/image_raw", rawImg);
-//        cv::waitKey(1);
-    }
-    catch (cv_bridge::Exception &e) {
-        LOG(ERROR) << e.what();
-        ROS_ERROR("Could not convert from '%s' to 'rgb8'.", img->encoding.c_str());
-    }
-    LOG(INFO) << "Out imageCallback()";
 }
 
 void FFDS::MODULES::RGB_IRSeperator::run() {
@@ -87,7 +47,6 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
 
     while (ros::ok()) {
         ros::spinOnce();
-        LOG(INFO) << "After ROS spinOnce()";
         if (rawImg.empty()) {
             LOG(WARNING) << "raw image is empty!";
             ros::Duration(0.1).sleep();
