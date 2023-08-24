@@ -35,7 +35,7 @@ include_directories(
 find_library(YAML_CPP_LIBRARIES yaml-cpp)
 
 # cv_bridge
-#set(cv_bridge_DIR ~/cv_bridge_ws/install/share/cv_bridge/cmake)
+set(cv_bridge_DIR ~/m300_ws/devel/share/cv_bridge/cmake)
 find_package(cv_bridge REQUIRED)
 include_directories(${cv_bridge_INCLUDE_DIRS})
 link_directories(${cv_bridge_LIBRARY_DIRS})
