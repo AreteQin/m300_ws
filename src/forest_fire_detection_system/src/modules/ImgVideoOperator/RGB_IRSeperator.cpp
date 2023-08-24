@@ -1,11 +1,31 @@
 #include <glog/logging.h>
 #include <modules/ImgVideoOperator/RGB_IRSeperator.hpp>
+#include <dji_camera_image.hpp>
+
+void show_rgb(CameraRGBImage img, char *name) {
+    std::cout << "#### Got image from:\t" << std::string(name) << std::endl;
+    cv::Mat mat(img.height, img.width, CV_8UC3, img.rawData.data(), img.width * 3);
+    cvtColor(mat, mat, cv::COLOR_RGB2BGR);
+    imshow(name, mat);
+    cv::waitKey(1);
+}
+
+void mainCameraStreamCallBack(const sensor_msgs::Image &msg) {
+    CameraRGBImage img;
+    img.rawData = msg.data;
+    img.height = msg.height;
+    img.width = msg.width;
+    char Name[] = "MAIN_CAM";
+    show_rgb(img, Name);
+    std::cout << "height is" << msg.height << std::endl;
+    std::cout << "width is" << msg.width << std::endl;
+}
 
 FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 //    image_transport::ImageTransport it(nh);
 //    image_transport::Subscriber sub_color = it.subscribe("dji_osdk_ros/main_camera_images", 1,
 //                                                         &RGB_IRSeperator::imageCallback, this);
-    imgSub = nh.subscribe("dji_osdk_ros/main_camera_images", 1, &RGB_IRSeperator::imageCallback, this);
+    imgSub = nh.subscribe("dji_osdk_ros/main_camera_images", 1, &mainCameraStreamCallBack);
     imgIRPub = it.advertise("forest_fire_detection_system/main_camera_ir_image", 1);
     imgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_image", 1);
     resizeImgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_resize_image", 1);
