@@ -29,32 +29,34 @@
 #include <tools/SystemLib.hpp>
 
 namespace FFDS {
-namespace MODULES {
-class RGB_IRSeperator {
- public:
-  RGB_IRSeperator();
+    namespace MODULES {
+        class RGB_IRSeperator {
+        public:
+            RGB_IRSeperator();
 
-  void run();
+            void run();
 
- private:
-  ros::NodeHandle nh;
-  image_transport::ImageTransport it{nh};
+        private:
+            ros::NodeHandle nh;
+            image_transport::ImageTransport it{nh};
 
-  ros::Subscriber imgSub;
+            ros::Subscriber imgSub;
 
-  image_transport::Publisher imgIRPub;
-  image_transport::Publisher imgRGBPub;
-  image_transport::Publisher resizeImgRGBPub;
+            image_transport::Publisher imgIRPub;
+            image_transport::Publisher imgRGBPub;
+            image_transport::Publisher resizeImgRGBPub;
 
-  cv_bridge::CvImagePtr rawImgPtr;
-  cv::Mat rawImg;
+            cv_bridge::CvImagePtr rawImgPtr;
+            cv::Mat rawImg;
 
-  int resRGBWid{255};
-  int resRGBHet{255};
+            int resRGBWid{255};
+            int resRGBHet{255};
 
-  void imageCallback(const sensor_msgs::Image::ConstPtr& img);
-};
-}  // namespace MODULES
+//            void imageCallback(const sensor_msgs::Image &msg);
+
+            void imageCallback(const sensor_msgs::ImageConstPtr &img);
+        };
+    }  // namespace MODULES
 }  // namespace FFDS
 
 #endif  // INCLUDE_MODULES_IMGVIDEOOPERATOR_RGB_IRSEPERATOR_HPP_

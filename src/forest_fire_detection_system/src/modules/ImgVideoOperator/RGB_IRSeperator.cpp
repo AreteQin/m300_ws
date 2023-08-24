@@ -4,8 +4,10 @@
 
 FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
 //    image_transport::ImageTransport it(nh);
-    image_transport::Subscriber sub_color = it.subscribe("dji_osdk_ros/main_camera_images", 1,
-                                                         &RGB_IRSeperator::imageCallback, this);
+//    image_transport::Subscriber sub_color = it.subscribe("dji_osdk_ros/main_camera_images", 1,
+//                                                         RGB_IRSeperator::imageCallback);
+//    auto main_camera_stream_sub = nh.subscribe("dji_osdk_ros/main_camera_images", 10, &RGB_IRSeperator::imageCallback, this);
+    imgSub = nh.subscribe("dji_osdk_ros/main_camera_images", 1, &RGB_IRSeperator::imageCallback, this);
     imgIRPub = it.advertise("forest_fire_detection_system/main_camera_ir_image", 1);
     imgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_image", 1);
     resizeImgRGBPub = it.advertise("forest_fire_detection_system/main_camera_rgb_resize_image", 1);
@@ -13,15 +15,30 @@ FFDS::MODULES::RGB_IRSeperator::RGB_IRSeperator() {
     ros::Duration(2.0).sleep();
 }
 
-void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image::ConstPtr &img) {
-        rawImgPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
-        rawImg = rawImgPtr->image;
+void FFDS::MODULES::RGB_IRSeperator::imageCallback(
+        const sensor_msgs::Image::ConstPtr &img) {
+    rawImgPtr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
+    rawImg = rawImgPtr->image;
 }
 
+//void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image &msg) {
+//    CameraRGBImage img;
+//    img.rawData = msg.data;
+//    img.height = msg.height;
+//    img.width = msg.width;
+//    cv::Mat mat(img.height, img.width, CV_8UC3, img.rawData.data(), img.width * 3);
+//    cvtColor(mat, mat, cv::COLOR_RGB2BGR);
+//    cv::imshow("raw image", mat);
+//    cv::waitKey(1);
+//    rawImg = mat;
+//    cv::imshow("raw image", rawImg);
+//    cv::waitKey(1);
+//}
+
 void FFDS::MODULES::RGB_IRSeperator::run() {
-    const std::string package_path =
-            ros::package::getPath("forest_fire_detection_system");
-    const std::string config_path = package_path + "/config/H20T_Camera.yaml";
+//    const std::string package_path =
+//            ros::package::getPath("forest_fire_detection_system");
+    const std::string config_path = "./m300_ws/src/forest_fire_detection_system/config/H20T_Camera.yaml";
     PRINT_INFO("get camera params from %s", config_path.c_str());
     YAML::Node node = YAML::LoadFile(config_path);
 
@@ -53,16 +70,16 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
             continue;
         }
 
-        LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
-                  << ", cols: " << rawImg.cols;
-        LOG(INFO) << "ir image position: rows: " << irUpLeft_x
-                  << ", cols: " << irUpLeft_y;
-        LOG(INFO) << "ir image shape: rows: " << irImgWid
-                  << ", cols: " << irImgHet;
-        LOG(INFO) << "rgb image position: rows: " << rgbUpLeft_x
-                  << ", cols: " << rgbUpLeft_y;
-        LOG(INFO) << "rgb image shape: rows: " << rgbImgWid
-                  << ", cols: " << rgbImgHet;
+//        LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
+//                  << ", cols: " << rawImg.cols;
+//        LOG(INFO) << "ir image position: rows: " << irUpLeft_x
+//                  << ", cols: " << irUpLeft_y;
+//        LOG(INFO) << "ir image shape: rows: " << irImgWid
+//                  << ", cols: " << irImgHet;
+//        LOG(INFO) << "rgb image position: rows: " << rgbUpLeft_x
+//                  << ", cols: " << rgbUpLeft_y;
+//        LOG(INFO) << "rgb image shape: rows: " << rgbImgWid
+//                  << ", cols: " << rgbImgHet;
 
         cv::Mat irImg =
                 rawImg(cv::Rect(irUpLeft_x, irUpLeft_y, irImgWid, irImgHet));
