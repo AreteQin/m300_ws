@@ -21,20 +21,6 @@ void FFDS::MODULES::RGB_IRSeperator::imageCallback(
     rawImg = rawImgPtr->image;
 }
 
-//void FFDS::MODULES::RGB_IRSeperator::imageCallback(const sensor_msgs::Image &msg) {
-//    CameraRGBImage img;
-//    img.rawData = msg.data;
-//    img.height = msg.height;
-//    img.width = msg.width;
-//    cv::Mat mat(img.height, img.width, CV_8UC3, img.rawData.data(), img.width * 3);
-//    cvtColor(mat, mat, cv::COLOR_RGB2BGR);
-//    cv::imshow("raw image", mat);
-//    cv::waitKey(1);
-//    rawImg = mat;
-//    cv::imshow("raw image", rawImg);
-//    cv::waitKey(1);
-//}
-
 void FFDS::MODULES::RGB_IRSeperator::run() {
     const std::string package_path =
             ros::package::getPath("dji_osdk_ros");
@@ -58,8 +44,7 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
     int rgbUpLeft_y = upperBound;
 
     /**
-     * FIXED: the hh DJI change the video size after press the "RECORD" from the
-     * FIXED: remoter! YOU GOT BE KIDDING ME!                                                             Ciao: Really?
+     * FIXED: the hh DJI change the video size after press the "RECORD" button
      * */
 
     while (ros::ok()) {
