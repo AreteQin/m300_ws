@@ -20,7 +20,7 @@
 #include <tools/SystemLib.hpp>
 int main(int argc, char** argv) {
   const std::string package_path =
-      ros::package::getPath("forest_fire_detection_system");
+      ros::package::getPath("dji_osdk_ros");
   const std::string config_path = package_path + "/config/ZigzagPathShape.yaml";
   PRINT_INFO("get from %s", config_path.c_str());
   YAML::Node node = YAML::LoadFile(config_path);

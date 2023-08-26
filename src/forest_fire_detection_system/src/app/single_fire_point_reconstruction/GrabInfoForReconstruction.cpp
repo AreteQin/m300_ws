@@ -29,7 +29,7 @@ namespace FFDS {
 
             // STEP: 1 read the parameters
             const std::string package_path =
-                    ros::package::getPath("forest_fire_detection_system");
+                    ros::package::getPath("dji_osdk_ros");
             const std::string config_path = package_path + "/config/reconstruction.yaml";
             PRINT_INFO("Load parameters from:%s", config_path.c_str());
             YAML::Node node = YAML::LoadFile(config_path);

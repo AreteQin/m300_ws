@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh;
 
   const std::string package_path =
-      ros::package::getPath("forest_fire_detection_system");
+      ros::package::getPath("dji_osdk_ros");
 
   const std::string m300_stereo_config_path =
       package_path + "/config/m300_front_stereo_param.yaml";
