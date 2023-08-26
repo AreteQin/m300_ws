@@ -74,7 +74,7 @@ bool FFDS::MODULES::GimbalCameraOperator::ctrlRotateGimbal(
   PRINT_INFO("use the thermal camera image center as the target!");
 
   const std::string package_path =
-      ros::package::getPath("forest_fire_detection_system");
+      ros::package::getPath("dji_osdk_ros");
   const std::string config_path = package_path + "/config/H20T_Camera.yaml";
   PRINT_INFO("get camera params from %s", config_path.c_str());
   YAML::Node node = YAML::LoadFile(config_path);
