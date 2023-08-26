@@ -173,7 +173,7 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(dji_osdk_ros::InitWaypoi
     /**
      * read the zigzag path shape parameters from yaml
      * */
-    const std::string package_path = ros::package::getPath("forest_fire_detection_system");
+    const std::string package_path = ros::package::getPath("dji_osdk_ros");
     const std::string config_path = package_path + "/config/ZigzagPathShape.yaml";
     PRINT_INFO("Load zigzag shape from:%s", config_path.c_str());
     YAML::Node node = YAML::LoadFile(config_path);
