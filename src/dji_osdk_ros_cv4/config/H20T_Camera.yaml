@@ -1,14 +1,14 @@
 # original image resolution is 1920 x 1080.
 # after using recording, it is 1920 x 1440, then the u: 156 l: 924
 full_img_width: 1920
-full_img_height: 1080
-#full_img_height: 1440
+#full_img_height: 1080
+full_img_height: 1440
 
 # pure image position in the full image by testing!
-upper_bound: 336
-lower_bound: 1106
-#upper_bound: 156
-#lower_bound: 924
+#upper_bound: 336
+#lower_bound: 1106
+upper_bound: 156
+lower_bound: 924
 left_bound: 0
 right_bound: 1920
 
