@@ -1,5 +1,5 @@
 # original image resolution is 1920 x 1080.
-# after using recording, it is 1920 x 1440, then the u: 156 l: 924
+# once used recording, it is 1920 x 1440, then the u: 156 l: 924
 full_img_width: 1920
 #full_img_height: 1080
 full_img_height: 1440

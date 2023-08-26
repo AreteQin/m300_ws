@@ -44,7 +44,7 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
     int rgbUpLeft_y = upperBound;
 
     /**
-     * FIXED: the hh DJI change the video size after press the "RECORD" button
+     * FIXED: the hh DJI change the video resolution after press the "RECORD" button
      * */
 
     while (ros::ok()) {
@@ -55,8 +55,7 @@ void FFDS::MODULES::RGB_IRSeperator::run() {
             continue;
         }
 
-//        LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows
-//                  << ", cols: " << rawImg.cols;
+        LOG(INFO) << "Org mixed image shape: rows: " << rawImg.rows << ", cols: " << rawImg.cols;
 //        LOG(INFO) << "ir image position: rows: " << irUpLeft_x
 //                  << ", cols: " << irUpLeft_y;
 //        LOG(INFO) << "ir image shape: rows: " << irImgWid
