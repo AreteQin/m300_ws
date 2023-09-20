@@ -70,10 +70,8 @@ namespace FFDS {
             LocalplanWriter.write("x", "y", "z");
 
             for (int i = 0; i < local_pos_vec.size(); ++i) {
-                GPSplanWriter.write(wp_v2_vec[i].longitude, wp_v2_vec[i].latitude,
-                                    wp_v2_vec[i].relativeHeight);
-                LocalplanWriter.write(local_pos_vec[i].x, local_pos_vec[i].y,
-                                      local_pos_vec[i].z);
+                GPSplanWriter.write(wp_v2_vec[i].longitude, wp_v2_vec[i].latitude, wp_v2_vec[i].relativeHeight);
+                LocalplanWriter.write(local_pos_vec[i].x, local_pos_vec[i].y, local_pos_vec[i].z);
             }
             GPSplanWriter.close();
             LocalplanWriter.close();
@@ -85,20 +83,15 @@ namespace FFDS {
             initWaypointV2SettingPtr->request.waypointV2InitSettings.repeatTimes = 1;
 
             initWaypointV2SettingPtr->request.waypointV2InitSettings.finishedAction =
-                    initWaypointV2SettingPtr->request.waypointV2InitSettings
-                            .DJIWaypointV2MissionFinishedGoHome;
+                    initWaypointV2SettingPtr->request.waypointV2InitSettings.DJIWaypointV2MissionFinishedGoHome;
 
             initWaypointV2SettingPtr->request.waypointV2InitSettings.maxFlightSpeed = 2;
-            initWaypointV2SettingPtr->request.waypointV2InitSettings.autoFlightSpeed =
-                    velocity_;
+            initWaypointV2SettingPtr->request.waypointV2InitSettings.autoFlightSpeed = velocity_;
 
-            initWaypointV2SettingPtr->request.waypointV2InitSettings
-                    .exitMissionOnRCSignalLost = 1;
+            initWaypointV2SettingPtr->request.waypointV2InitSettings.exitMissionOnRCSignalLost = 1;
 
-            initWaypointV2SettingPtr->request.waypointV2InitSettings
-                    .gotoFirstWaypointMode =
-                    initWaypointV2SettingPtr->request.waypointV2InitSettings
-                            .DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
+            initWaypointV2SettingPtr->request.waypointV2InitSettings.gotoFirstWaypointMode =
+                    initWaypointV2SettingPtr->request.waypointV2InitSettings.DJIWaypointV2MissionGotoFirstWaypointModePointToPoint;
 
             initWaypointV2SettingPtr->request.waypointV2InitSettings.mission = wp_v2_vec;
 
