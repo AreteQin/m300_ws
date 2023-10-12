@@ -58,17 +58,23 @@ int main(int argc, char **argv) {
     /*! RGB flow init */
     auto setup_camera_stream_client = nh.serviceClient<dji_osdk_ros::SetupCameraStream>("setup_camera_stream");
 
-    dji_osdk_ros::SetupCameraStream setupCameraStream_fpv;
-    auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
-    setupCameraStream_fpv.request.cameraType = setupCameraStream_fpv.request.FPV_CAM;
-    setupCameraStream_fpv.request.start = 1;
-    setup_camera_stream_client.call(setupCameraStream_fpv);
-
-    dji_osdk_ros::SetupCameraStream setupCameraStream_main;
-    auto main_camera_stream_sub = nh.subscribe("dji_osdk_ros/main_camera_images", 10, mainCameraStreamCallBack);
-    setupCameraStream_main.request.cameraType = setupCameraStream_main.request.MAIN_CAM;
-    setupCameraStream_main.request.start = 1;
-    setup_camera_stream_client.call(setupCameraStream_main);
+    // read instruction from user
+    std::cout << "Please input the camera type you want to subscribe: 0 for FPV_CAM, 1 for MAIN_CAM" << std::endl;
+    int camera_type;
+    std::cin >> camera_type;
+    if (camera_type == 1) {
+        dji_osdk_ros::SetupCameraStream setupCameraStream_main;
+        auto main_camera_stream_sub = nh.subscribe("dji_osdk_ros/main_camera_images", 10, mainCameraStreamCallBack);
+        setupCameraStream_main.request.cameraType = setupCameraStream_main.request.MAIN_CAM;
+        setupCameraStream_main.request.start = 1;
+        setup_camera_stream_client.call(setupCameraStream_main);
+    }else if(camera_type == 0){
+        dji_osdk_ros::SetupCameraStream setupCameraStream_fpv;
+        auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
+        setupCameraStream_fpv.request.cameraType = setupCameraStream_fpv.request.FPV_CAM;
+        setupCameraStream_fpv.request.start = 1;
+        setup_camera_stream_client.call(setupCameraStream_fpv);
+    }
 
 //    auto vice_camera_stream_sub = nh.subscribe("dji_osdk_ros/camera_h264_stream", 10, mainCameraStreamCallBack);
 //    auto setup_camera_h264_client = nh.serviceClient<dji_osdk_ros::SetupCameraH264>("setup_camera_h264");
