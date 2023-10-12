@@ -381,12 +381,15 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
 //        }
 //    }
 
-    if ((ros::ok() && (waypoint_V2_mission_state_push_.state == 0x6)) {
-        PRINT_INFO("go home and land...")
-        dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
-        if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
-            PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
-            return;
+    while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) {
+        continue;
+    }
+
+    PRINT_INFO("go home and land...")
+    dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
+    if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
+        PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
+        return;
 
         goHomeLand();
     }
