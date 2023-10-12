@@ -58,11 +58,11 @@ int main(int argc, char **argv) {
     /*! RGB flow init */
     auto setup_camera_stream_client = nh.serviceClient<dji_osdk_ros::SetupCameraStream>("setup_camera_stream");
 
-//    dji_osdk_ros::SetupCameraStream setupCameraStream_fpv;
-//    auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
-//    setupCameraStream_fpv.request.cameraType = setupCameraStream_fpv.request.FPV_CAM;
-//    setupCameraStream_fpv.request.start = 1;
-//    setup_camera_stream_client.call(setupCameraStream_fpv);
+    dji_osdk_ros::SetupCameraStream setupCameraStream_fpv;
+    auto fpv_camera_stream_sub = nh.subscribe("dji_osdk_ros/fpv_camera_images", 10, fpvCameraStreamCallBack);
+    setupCameraStream_fpv.request.cameraType = setupCameraStream_fpv.request.FPV_CAM;
+    setupCameraStream_fpv.request.start = 1;
+    setup_camera_stream_client.call(setupCameraStream_fpv);
 
     dji_osdk_ros::SetupCameraStream setupCameraStream_main;
     auto main_camera_stream_sub = nh.subscribe("dji_osdk_ros/main_camera_images", 10, mainCameraStreamCallBack);
