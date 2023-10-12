@@ -187,9 +187,9 @@ void FFDS::APP::SingleFirePointTaskManager::initMission(dji_osdk_ros::InitWaypoi
      * Generate and Record the genertated local position and gps position
      * */
     MODULES::ZigzagPathPlanner pathPlanner(homeGPos, num, len, wid, height);
-    std::vector<dji_osdk_ros::WaypointV2> WpV2Vec =
+    std::vector <dji_osdk_ros::WaypointV2> WpV2Vec =
             pathPlanner.getWpV2Vec(true, initAtt(2));
-    std::vector<COMMON::LocalPosition<double>> LocalPosVec =
+    std::vector <COMMON::LocalPosition<double>> LocalPosVec =
             pathPlanner.getLocalPosVec(true, initAtt(2));
 
     TOOLS::FileWritter GPSplanWriter("m300_ref_GPS_path.csv", 8);
@@ -304,82 +304,91 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
      * exit...
      * 2. 0x6 == exit waypointV2 mission
      **/
-    PRINT_INFO("start finding the potential fire~");
-    int isPotFireNum = 0;
-    while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) { // 0x6 == exit waypointV2 mission
-        ros::spinOnce();
-        if (signleFirePos.target_type != signleFirePos.IS_HEAT) {
-            isPotFireNum = 0;
-            continue;
-        } else {
-            isPotFireNum += 1;
-        }
+//    PRINT_INFO("start finding the potential fire~");
+//    int isPotFireNum = 0;
+//    while (ros::ok() && (waypoint_V2_mission_state_push_.state != 0x6)) { // 0x6 == exit waypointV2 mission
+//        ros::spinOnce();
+//        if (signleFirePos.target_type != signleFirePos.IS_HEAT) {
+//            isPotFireNum = 0;
+//            continue;
+//        } else {
+//            isPotFireNum += 1;
+//        }
+//
+//        if (isPotFireNum < 10) {
+//            PRINT_INFO(
+//                    "potential fire FOUND %d times! NOT stable enough, check again!",
+//                    isPotFireNum);
+//            ros::Rate(2).sleep();
+//        } else {
+//            PRINT_INFO("potential fire FOUND %d times! call to pause the mission!",
+//                       isPotFireNum);
+//            dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
+//            if (!(wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_))) {
+//                PRINT_ERROR(
+//                        "failed to pause the mission, please use remoter to cancel!");
+//                break;
+//            }
+//
+//            PRINT_INFO(
+//                    "pause mission successfully, call for gimbal and camera to focus...")
+//
+//            if (gcOperator.ctrlRotateGimbal(10, 20.0)) {
+//                PRINT_INFO("rotate done! zoom the camera!")
+//            } else {
+//                PRINT_WARN("failed to rotate camera, use bigger tolerance!");
+//                if (gcOperator.ctrlRotateGimbal(15, 30.0)) {
+//                    PRINT_INFO("rotate done wuth bigger tolerance!");
+//                } else {
+//                    PRINT_WARN(
+//                            "failed to rotate camera with bigger tolerance! ZOOM anyway!");
+//                }
+//            }
+//
+//            if (gcOperator.setCameraZoom(5.0)) {
+//                PRINT_INFO("zoom done! call for further detecting!")
+//            } else {
+//                PRINT_WARN("failed to zoom camera, further detect anyway~");
+//            }
+//
+//            /* call for segmentation */
+//            forest_fire_detection_system::SegmentSmoke segmentSmoke_;
+//            segmentSmoke_.request.timeOut = 90.0;
+//            segment_smoke_client.call(segmentSmoke_);
+//
+//            PRINT_INFO("further detecting done! reset gimbal and camera!")
+//            if (gcOperator.resetGimbal()) {
+//                PRINT_INFO("reset gimbal done! zoom the camera!")
+//            } else {
+//                PRINT_WARN("failed to reset gimbal!");
+//            }
+//
+//            if (gcOperator.resetCameraZoom()) {
+//                PRINT_INFO("reset zoom done!")
+//            } else {
+//                PRINT_WARN("failed to zoom camera");
+//            }
+//
+//            PRINT_INFO("go home and land...")
+//            dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
+//            if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
+//                PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
+//                break;
+//            }
+//
+//            goHomeLand();
+//            break;
+//        }
+//    }
 
-        if (isPotFireNum < 10) {
-            PRINT_INFO(
-                    "potential fire FOUND %d times! NOT stable enough, check again!",
-                    isPotFireNum);
-            ros::Rate(2).sleep();
-        } else {
-            PRINT_INFO("potential fire FOUND %d times! call to pause the mission!",
-                       isPotFireNum);
-            dji_osdk_ros::PauseWaypointV2Mission pauseWaypointV2Mission_;
-            if (!(wpV2Operator.pauseWaypointV2Mission(&pauseWaypointV2Mission_))) {
-                PRINT_ERROR(
-                        "failed to pause the mission, please use remoter to cancel!");
-                break;
-            }
-
-            PRINT_INFO(
-                    "pause mission successfully, call for gimbal and camera to focus...")
-
-            if (gcOperator.ctrlRotateGimbal(10, 20.0)) {
-                PRINT_INFO("rotate done! zoom the camera!")
-            } else {
-                PRINT_WARN("failed to rotate camera, use bigger tolerance!");
-                if (gcOperator.ctrlRotateGimbal(15, 30.0)) {
-                    PRINT_INFO("rotate done wuth bigger tolerance!");
-                } else {
-                    PRINT_WARN(
-                            "failed to rotate camera with bigger tolerance! ZOOM anyway!");
-                }
-            }
-
-            if (gcOperator.setCameraZoom(5.0)) {
-                PRINT_INFO("zoom done! call for further detecting!")
-            } else {
-                PRINT_WARN("failed to zoom camera, further detect anyway~");
-            }
-
-            /* call for segmentation */
-            forest_fire_detection_system::SegmentSmoke segmentSmoke_;
-            segmentSmoke_.request.timeOut = 90.0;
-            segment_smoke_client.call(segmentSmoke_);
-
-            PRINT_INFO("further detecting done! reset gimbal and camera!")
-            if (gcOperator.resetGimbal()) {
-                PRINT_INFO("reset gimbal done! zoom the camera!")
-            } else {
-                PRINT_WARN("failed to reset gimbal!");
-            }
-
-            if (gcOperator.resetCameraZoom()) {
-                PRINT_INFO("reset zoom done!")
-            } else {
-                PRINT_WARN("failed to zoom camera");
-            }
-
-            PRINT_INFO("go home and land...")
-            dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
-            if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
-                PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
-                break;
-            }
-
-            goHomeLand();
-            break;
-        }
+    PRINT_INFO("go home and land...")
+    dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
+    if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
+        PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
+        break;
     }
+
+    goHomeLand();
 
     return;
 }
