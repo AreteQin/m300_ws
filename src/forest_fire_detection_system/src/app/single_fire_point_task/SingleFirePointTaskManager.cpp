@@ -385,7 +385,7 @@ void FFDS::APP::SingleFirePointTaskManager::run() {
     dji_osdk_ros::StopWaypointV2Mission stopWaypointV2Mission_;
     if (!wpV2Operator.stopWaypointV2Mission(&stopWaypointV2Mission_)) {
         PRINT_ERROR("can not stop waypointV2 mission, please use the remoter!");
-        break;
+        return;
     }
 
     goHomeLand();
