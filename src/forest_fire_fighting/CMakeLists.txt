@@ -8,19 +8,18 @@ project(forest_fire_fighting)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
-  dji_osdk_ros
-  image_transport
-  roscpp
-  sensor_msgs
-  std_msgs
-  tf2
-  tf2_ros
+        cv_bridge
+        dji_osdk_ros
+        image_transport
+        roscpp
+        sensor_msgs
+        std_msgs
+        tf2
+        tf2_ros
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
-
+find_package(OpenCV REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -108,10 +107,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES forest_fire_fighting
-#  CATKIN_DEPENDS cv_bridge dji_osdk_ros image_transport roscpp sensor_msgs std_msgs tf2 tf2_ros
-#  DEPENDS system_lib
+        #  INCLUDE_DIRS include
+        #  LIBRARIES forest_fire_fighting
+        #  CATKIN_DEPENDS cv_bridge dji_osdk_ros image_transport roscpp sensor_msgs std_msgs tf2 tf2_ros
+        #  DEPENDS system_lib
 )
 
 ###########
@@ -121,8 +120,8 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+        # include
+        ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -138,7 +137,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/forest_fire_fighting_node.cpp)
+add_executable(compress_video_node src/compress_video_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -151,9 +150,10 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(${PROJECT_NAME}_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(compress_video_node
+        ${catkin_LIBRARIES}
+        ${OpenCV_LIBRARIES}
+)
 
 #############
 ## Install ##
