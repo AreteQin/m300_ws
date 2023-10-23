@@ -62,6 +62,8 @@ from jsk_recognition_msgs.msg import BoundingBoxArray
 def callback(image, pub):
     try:
         frame = CvBridge().imgmsg_to_cv2(image, "bgr8")
+        # convert color
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         cv2.imshow("original", frame)
         cv2.waitKey(1)
         results = model(frame, stream=True)
