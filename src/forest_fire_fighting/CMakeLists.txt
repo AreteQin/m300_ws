@@ -7,6 +7,8 @@ project(forest_fire_fighting)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules) # Add elements to list
+
 find_package(catkin REQUIRED COMPONENTS
         cv_bridge
         dji_osdk_ros
@@ -17,10 +19,15 @@ find_package(catkin REQUIRED COMPONENTS
         std_msgs
         tf2
         tf2_ros
+        message_filters
+        vision_msgs
 )
 
 ## System dependencies are found with CMake's conventions
 find_package(OpenCV REQUIRED)
+find_package(Glog REQUIRED)
+include_directories(${GLOG_INCLUDE_DIRS})
+link_libraries(${GLOG_LIBRARIES})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -139,6 +146,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(compress_video_node src/compress_video_node.cpp)
+add_executable(fire_spots_visualization src/fire_spots_visualization.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,6 +160,11 @@ add_executable(compress_video_node src/compress_video_node.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(compress_video_node
+        ${catkin_LIBRARIES}
+        ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(fire_spots_visualization
         ${catkin_LIBRARIES}
         ${OpenCV_LIBRARIES}
 )

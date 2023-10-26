@@ -45,8 +45,8 @@ date = datetime.datetime.now().strftime("%Y%m%d")
 # to get the parameter:
 # yolo task=detect mode=train model=yolov8n.pt data=AVITAGS_NAVLAB20230930-1/data.yaml epochs=30 imgsz=640
 classNames = ["Wildfire Spot"]
-# model = YOLO("/home/qin/m300_ws/src/forest_fire_fighting/scripts/YoloWeights/best.pt")
-model = YOLO("/home/qin/m300_ws/src/forest_fire_fighting/scripts/YoloWeights/yolov8n.pt")
+model = YOLO("/home/qin/m300_ws/src/forest_fire_fighting/scripts/YoloWeights/best.pt")
+# model = YOLO("/home/qin/m300_ws/src/forest_fire_fighting/scripts/YoloWeights/yolov8n.pt")
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # params for recording the yolo processed video
