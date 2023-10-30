@@ -55,19 +55,18 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # print("[INFO]", date)
 # save_path = 'home/nav/dev/datasets/videos/20231016/'
 
-# import Detection2DArray
-from jsk_recognition_msgs.msg import BoundingBox
-from jsk_recognition_msgs.msg import BoundingBoxArray
+# import vision_msgs
+from vision_msgs.msg import Detection2D, Detection2DArray
 
 def callback(image, pub):
     try:
         frame = CvBridge().imgmsg_to_cv2(image, "bgr8")
         # convert color
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        cv2.imshow("original", frame)
-        cv2.waitKey(1)
+        # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # cv2.imshow("original", frame)
+        # cv2.waitKey(1)
         results = model(frame, stream=True)
-        ros_boxes = BoundingBoxArray()
+        ros_boxes = Detection2DArray()
         ros_boxes.header = image.header
         for result in results:
             boxes = result.boxes
@@ -77,34 +76,37 @@ def callback(image, pub):
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 1)
                 # print(f"======> The Coordinate x_min y_min x_max y_x=max\n", x1, y1, x2, y2)
 
-                # confidence
-                confidence = math.ceil((box.conf[0] * 100)) / 100
-                # print("======> Confidence", confidence)
+                # # confidence
+                # confidence = math.ceil((box.conf[0] * 100)) / 100
+                # # print("======> Confidence", confidence)
+                #
+                # # class_name
+                # cls = int(box.cls[0])
+                # # print("======> Class Name", classNames[cls])
+                #
+                # # object detials
+                # org = [x1, y1]
+                # font = cv2.FONT_HERSHEY_SIMPLEX
+                # fontScale = 1
+                # color = (255, 0, 0)
+                # thickness = 1
+                #
+                # cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
+                # cv2.imshow('processed', frame)
+                # cv2.waitKey(1)
 
-                # class_name
-                cls = int(box.cls[0])
-                # print("======> Class Name", classNames[cls])
-
-                # object detials
-                org = [x1, y1]
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                fontScale = 1
-                color = (255, 0, 0)
-                thickness = 1
-
-                cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
-                cv2.imshow('processed', frame)
-                cv2.waitKey(1)
                 # add results to the Detection2DArray
-                ros_box = BoundingBox()
-                # ros_box.header = image.header
-                ros_box.pose.position.x = (x1 + x2) / 2
-                ros_box.pose.position.y = (y1 + y2) / 2
-                ros_box.dimensions.x = x2 - x1
-                ros_box.dimensions.y = y2 - y1
-                ros_box.dimensions.z = 0.0
-                ros_boxes.boxes.append(ros_box)
+                ros_box = Detection2D()
+                ros_box.header = image.header
+                ros_box.bbox.size_x = x2 - x1
+                ros_box.bbox.size_y = y2 - y1
+                ros_box.bbox.center.x = (x1 + x2) / 2
+                ros_box.bbox.center.y = (y1 + y2) / 2
+                ros_box.bbox.center.theta = 0
+                ros_boxes.detections.append(ros_box)
             pub.publish(ros_boxes)
+            # print how many boxes are detected
+            print("======> Number of boxes detected: ", len(boxes))
     except CvBridgeError as e:
         print(e)
 
@@ -112,9 +114,9 @@ def callback(image, pub):
 def listener():
     rospy.init_node('listener', anonymous=True)
     # publish the detection bounding boxes using jsk_recognition_msgs/Detection2DArray
-    pub = rospy.Publisher('/bounding_boxes/fire_spots', BoundingBoxArray, queue_size=10)
+    pub = rospy.Publisher('/bounding_boxes/fire_spots', Detection2DArray, queue_size=10)
     # rospy.Subscriber("/dji_osdk_ros/main_wide_RGB", Image, callback, pub)
-    rospy.Subscriber("/dji_osdk_ros/main_camera_images", Image, callback, pub)
+    rospy.Subscriber("/dji_osdk_ros/main_wide_RGB", Image, callback, pub)
     rospy.spin()
 
 
