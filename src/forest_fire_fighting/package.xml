@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>forest_fire_fighting</name>
+  <name>forest_fire_geolocation</name>
   <version>0.0.0</version>
-  <description>The forest_fire_fighting package</description>
+  <description>The forest_fire_geolocation package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
