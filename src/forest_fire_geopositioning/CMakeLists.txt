@@ -178,7 +178,7 @@ target_link_libraries(fire_spots_visualization
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-catkin_install_python(PROGRAMS scripts/fire_detection.py # other_scripts.py
+catkin_install_python(PROGRAMS scripts/fire_detection_v8.py scripts/fire_detection_v5.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
