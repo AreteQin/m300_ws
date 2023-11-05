@@ -51,7 +51,7 @@ classNames = ["Wildfire Spot"]
 
 weight_path = "/home/qin/m300_ws/src/forest_fire_geopositioning/scripts/YoloWeights/v5l.pt"
 model = torch.hub.load('ultralytics/yolov5', 'custom',
-                       weight_path, force_reload = False)
+                       weight_path, force_reload = True)
 # model = torch.hub.load('ultralytics/yolov5', 'yolov5l', force_reload=True)
 # model = YOLO("/home/qin/m300_ws/src/forest_fire_geopositioning/scripts/YoloWeights/best.pt")
 # model = YOLO("/home/qin/m300_ws/src/forest_fire_fighting/scripts/YoloWeights/yolov8n.pt")
