@@ -4,6 +4,7 @@ import cv2
 
 # check python version
 import sys
+
 print("Python version: " + sys.version)
 
 import torch
@@ -48,9 +49,10 @@ date = datetime.datetime.now().strftime("%Y%m%d")
 # yolo task=detect mode=train model=yolov8n.pt data=AVITAGS_NAVLAB20230930-1/data.yaml epochs=30 imgsz=640
 classNames = ["Wildfire Spot"]
 
-weight_path = "/home/qin/m300_ws/src/forest_fire_geopositioning/scripts/YoloWeights/v8l.pt"
+weight_path = "/home/qin/m300_ws/src/forest_fire_geopositioning/scripts/YoloWeights/v5l.pt"
 model = torch.hub.load('ultralytics/yolov5', 'custom',
-                       weight_path, force_reload = True)
+                       weight_path, force_reload = False)
+# model = torch.hub.load('ultralytics/yolov5', 'yolov5l', force_reload=True)
 # model = YOLO("/home/qin/m300_ws/src/forest_fire_geopositioning/scripts/YoloWeights/best.pt")
 # model = YOLO("/home/qin/m300_ws/src/forest_fire_fighting/scripts/YoloWeights/yolov8n.pt")
 
@@ -64,6 +66,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # import vision_msgs
 from vision_msgs.msg import Detection2D, Detection2DArray
 
+
 def callback(image, pub):
     try:
         frame = CvBridge().imgmsg_to_cv2(image, "bgr8")
@@ -71,11 +74,11 @@ def callback(image, pub):
         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         # cv2.imshow("original", frame)
         # cv2.waitKey(1)
-        results = model(frame, stream=True)
+        results = model(frame)
         ros_boxes = Detection2DArray()
         ros_boxes.header = image.header
 
-# ###########################################################
+        # ###########################################################
         # qiao: changing yolov8 bbboxes into yolov5
         # bboxes
         # for result in results:
@@ -89,27 +92,10 @@ def callback(image, pub):
             x2 = int(box[2])
             y1 = int(box[1])
             y2 = int(box[3])
-            cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 2)
-                # print(f"======> The Coordinate x_min y_min x_max y_x=max\n", x1, y1, x2, y2)
 
-                # # confidence
-                # confidence = math.ceil((box.conf[0] * 100)) / 100
-                # # print("======> Confidence", confidence)
-                #
-                # # class_name
-                # cls = int(box.cls[0])
-                # # print("======> Class Name", classNames[cls])
-                #
-                # # object detials
-                # org = [x1, y1]
-                # font = cv2.FONT_HERSHEY_SIMPLEX
-                # fontScale = 1
-                # color = (255, 0, 0)
-                # thickness = 1
-                #
-                # cv2.putText(frame, classNames[cls], org, font, fontScale, color, thickness)
-                # cv2.imshow('processed', frame)
-                # cv2.waitKey(1)
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 255), 2)
+            cv2.imshow('processed', frame)
+            cv2.waitKey(1)
 
             # add results to the Detection2DArray
             # qiao20231031: maybe need modification
@@ -123,7 +109,7 @@ def callback(image, pub):
             ros_boxes.detections.append(ros_box)
             pub.publish(ros_boxes)
             # print how many boxes are detected
-        print("======> Number of boxes detected: ", len(boxes))
+        print("======> Number of boxes detected: ", len(ros_boxes.detections))
     except CvBridgeError as e:
         print(e)
 
