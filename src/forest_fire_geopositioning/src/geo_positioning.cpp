@@ -62,6 +62,8 @@ void callback(ros::Publisher *real_scale_pub,
         }
         // publish the GPS positions of fire spots
         fire_spots_GPS_pub->publish(fire_spots_GPS_msg);
+        // publish real scale
+        real_scale_pub->publish(real_scale_msg);
     }
 }
 
