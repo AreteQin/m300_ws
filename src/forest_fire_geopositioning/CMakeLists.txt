@@ -148,6 +148,7 @@ include_directories(
 add_executable(compress_video_node src/compress_video_node.cpp)
 add_executable(fire_spots_visualization src/fire_spots_visualization.cpp)
 add_executable(geo_positioning src/geo_positioning.cpp)
+add_executable(fire_subscriber src/fire_subscriber.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -171,6 +172,10 @@ target_link_libraries(fire_spots_visualization
 )
 
 target_link_libraries(geo_positioning
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(fire_subscriber
         ${catkin_LIBRARIES}
 )
 
