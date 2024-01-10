@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 //    message_filters::Subscriber<sensor_msgs::Image> sub_image;
 //    sub_image.subscribe(nodeHandler, "/dji_osdk_ros/main_camera_images", 1);
     image_transport::ImageTransport it(nodeHandler);
-    image_transport::SubscriberFilter sub_image(it, "/dji_osdk_ros/main_camera_images", 1);
+    image_transport::SubscriberFilter sub_image(it, "/dji_osdk_ros/main_wide_RGB", 1);
     message_filters::Subscriber<vision_msgs::Detection2DArray> sub_fire_spot;
     sub_fire_spot.subscribe(nodeHandler, "/bounding_boxes/fire_spots", 1);
 
