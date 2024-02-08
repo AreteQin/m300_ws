@@ -11,7 +11,7 @@ pip3 install pyserial
 ```
 rosrun dji_osdk_ros main_and_fpv_node
 
-rosrun forest_fire_fighting compress_video_node
+rosrun forest_fire_geopositioning compress_video_node
 
 # to run the fire localization and SLAM
 rosrun ORB_SLAM3 fire_localization /home/qin/Downloads/ORB_SLAM3_Ubuntu_20/Vocabulary/ORBvoc.txt /home/qin/Downloads/ORB_SLAM3_Ubuntu_20/Examples_old/Monocular/GoPro.yaml
