@@ -9,6 +9,10 @@ pip3 install pyserial
 
 ## Usage
 ```
+rosrun dji_osdk_ros main_and_fpv_node
+
+rosrun forest_fire_fighting compress_video_node
+
 # to run the fire localization and SLAM
 rosrun ORB_SLAM3 fire_localization /home/qin/Downloads/ORB_SLAM3_Ubuntu_20/Vocabulary/ORBvoc.txt /home/qin/Downloads/ORB_SLAM3_Ubuntu_20/Examples_old/Monocular/GoPro.yaml
 
@@ -42,4 +46,9 @@ https://drive.google.com/file/d/1YPX3RgdjjUx_tRMU9sRcODnS2XP0VS_U/view?usp=shari
 /position/fire_spots
 /position/fire_spots_GPS
 /position/real_scale
+```
+
+Create your own dataset:
+```
+rosbag record -O m300_dataset /bounding_boxes/fire_spots /clock /dji_osdk_ros/gps_position /dji_osdk_ros/main_wide_RGB /position/camera_pose /position/fire_spots /position/fire_spots_GPS /position/real_scale
 ```
