@@ -5,6 +5,10 @@
 sudo apt install ros-noetic-rosserial-msgs
 
 pip3 install pyserial
+
+sudo apt install ros-noetic-vision-msgs
+
+sudo apt install lib-google-glog-dev
 ```
 
 ## Usage
