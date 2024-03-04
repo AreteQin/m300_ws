@@ -17,7 +17,7 @@
 using namespace std;
 using namespace cv;
 
-void imageCallback(const sensor_msgs::ImageConstPtr& msg, image_transport::Publisher *pub) {
+void imageCallback(const sensor_msgs::ImageConstPtr &msg, image_transport::Publisher *pub) {
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
@@ -29,13 +29,23 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg, image_transport::Publi
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", dst).toImageMsg();
         pub->publish(msg);
 
-    } catch (cv_bridge::Exception& e) {
+    } catch (cv_bridge::Exception &e) {
         ROS_ERROR("cv_bridge exception: %s", e.what());
     }
 }
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "compress_video_node");
+
+    /*! RGB flow init */
+    auto setup_camera_stream_client = nh.serviceClient<dji_osdk_ros::SetupCameraStream>("setup_camera_stream");
+
+    dji_osdk_ros::SetupCameraStream setupCameraStream_main;
+    auto main_camera_stream_sub = nh.subscribe("dji_osdk_ros/main_camera_images", 10, mainCameraStreamCallBack);
+    setupCameraStream_main.request.cameraType = setupCameraStream_main.request.MAIN_CAM;
+    setupCameraStream_main.request.start = 1;
+    setup_camera_stream_client.call(setupCameraStream_main);
+
     ros::NodeHandle nh;
     image_transport::ImageTransport it(nh);
     image_transport::Publisher pub = it.advertise("/dji_osdk_ros/main_wide_RGB/", 5);
