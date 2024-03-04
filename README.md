@@ -13,8 +13,6 @@ sudo apt install lib-google-glog-dev
 
 ## Usage
 ```
-rosrun dji_osdk_ros main_and_fpv_node
-
 rosrun forest_fire_geopositioning compress_video_node
 
 # to run the fire localization and SLAM
