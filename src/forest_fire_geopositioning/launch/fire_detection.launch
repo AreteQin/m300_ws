@@ -1,0 +1,4 @@
+<launch>
+  <node name="video_compress" pkg="forest_fire_geopositioning" type="compress_video_node" />
+  <node name="fire_detection" pkg="forest_fire_geopositioning" type="fire_detection" />
+</launch>
