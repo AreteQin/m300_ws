@@ -1,6 +1,6 @@
 <launch>
   <node name="video_compress" pkg="forest_fire_geopositioning" type="compress_video_node" />
-  <node name="fire_detection" pkg="forest_fire_geopositioning" type="fire_detection" />
+  <node name="fire_detection" pkg="forest_fire_geopositioning" type="fire_detection_v8.py" />
   <node name="geo_positioning" pkg="forest_fire_geopositioning" type="geo_positioning" />
   <node name="serial_node" pkg="arduino_actuator" type="serial_node.py" args="/dev/ttyUSB0"/>
 </launch>
