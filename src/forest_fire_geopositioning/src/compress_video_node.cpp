@@ -13,9 +13,22 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include <dji_camera_image.hpp>
+#include <dji_osdk_ros/SetupCameraStream.h>
 
 using namespace std;
 using namespace cv;
+
+void mainCameraStreamCallBack(const sensor_msgs::Image &msg) {
+    CameraRGBImage img;
+    img.rawData = msg.data;
+    img.height = msg.height;
+    img.width = msg.width;
+//    char Name[] = "MAIN_CAM";
+//    show_rgb(img, Name);
+    std::cout << "height is" << msg.height << std::endl;
+    std::cout << "width is" << msg.width << std::endl;
+}
 
 void imageCallback(const sensor_msgs::ImageConstPtr &msg, image_transport::Publisher *pub) {
     cv_bridge::CvImagePtr cv_ptr;
@@ -36,6 +49,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg, image_transport::Publi
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "compress_video_node");
+    ros::NodeHandle nh;
 
     /*! RGB flow init */
     auto setup_camera_stream_client = nh.serviceClient<dji_osdk_ros::SetupCameraStream>("setup_camera_stream");
@@ -46,7 +60,6 @@ int main(int argc, char **argv) {
     setupCameraStream_main.request.start = 1;
     setup_camera_stream_client.call(setupCameraStream_main);
 
-    ros::NodeHandle nh;
     image_transport::ImageTransport it(nh);
     image_transport::Publisher pub = it.advertise("/dji_osdk_ros/main_wide_RGB/", 5);
     image_transport::Subscriber sub = it.subscribe("/dji_osdk_ros/main_camera_images", 5,

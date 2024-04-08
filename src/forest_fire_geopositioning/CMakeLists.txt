@@ -29,6 +29,13 @@ find_package(Glog REQUIRED)
 include_directories(${GLOG_INCLUDE_DIRS})
 link_libraries(${GLOG_LIBRARIES})
 
+include_directories(
+        include
+        #${DJIOSDK_INCLUDE_DIRS}
+        ${LIBUSB_1_INCLUDE_DIR}
+        ${catkin_INCLUDE_DIRS}
+)
+
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -178,6 +185,9 @@ target_link_libraries(geo_positioning
 target_link_libraries(fire_subscriber
         ${catkin_LIBRARIES}
 )
+
+add_dependencies(compress_video_node
+        dji_osdk_ros_generate_messages_cpp)
 
 #############
 ## Install ##
