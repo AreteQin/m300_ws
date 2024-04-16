@@ -156,6 +156,8 @@ add_executable(compress_video_node src/compress_video_node.cpp)
 add_executable(fire_spots_visualization src/fire_spots_visualization.cpp)
 add_executable(geo_positioning src/geo_positioning.cpp)
 add_executable(fire_subscriber src/fire_subscriber.cpp)
+add_executable(sync_gps_vision src/sync_gps_vision.cpp)
+add_executable(GPS_sub src/GPS_sub.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -182,12 +184,25 @@ target_link_libraries(geo_positioning
         ${catkin_LIBRARIES}
 )
 
+target_link_libraries(sync_gps_vision
+        ${catkin_LIBRARIES}
+        ${OpenCV_LIBRARIES}
+)
+
 target_link_libraries(fire_subscriber
+        ${catkin_LIBRARIES}
+)
+
+target_link_libraries(GPS_sub
         ${catkin_LIBRARIES}
 )
 
 add_dependencies(compress_video_node
         dji_osdk_ros_generate_messages_cpp)
+
+target_link_libraries(geo_positioning
+        ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -198,7 +213,9 @@ add_dependencies(compress_video_node
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-catkin_install_python(PROGRAMS scripts/fire_detection_v8.py scripts/fire_detection_v5.py
+catkin_install_python(PROGRAMS
+        scripts/fire_detection_v8.py
+        scripts/fire_detection_v5.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
