@@ -34,17 +34,18 @@ void imageCallback(const sensor_msgs::ImageConstPtr &msg, image_transport::Publi
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-        Mat img = cv_ptr->image;
-        Mat dst;
-        resize(img, dst, Size(640, 480));
-//        imshow("view", dst);
-//        waitKey(1);
-        sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", dst).toImageMsg();
-        pub->publish(msg);
-
     } catch (cv_bridge::Exception &e) {
         ROS_ERROR("cv_bridge exception: %s", e.what());
     }
+    Mat img = cv_ptr->image;
+    Mat dst;
+    resize(img, dst, Size(640, 480));
+    //        imshow("view", dst);
+    //        waitKey(1);
+    sensor_msgs::ImagePtr msg_pub = cv_bridge::CvImage(std_msgs::Header(), "bgr8", dst).toImageMsg();
+    // set the same timestamp and frame_id as the input image
+    msg_pub->header = msg->header;
+    pub->publish(msg_pub);
 }
 
 int main(int argc, char **argv) {
