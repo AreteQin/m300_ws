@@ -25,15 +25,29 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 find_package(OpenCV REQUIRED)
+
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
 find_package(Glog REQUIRED)
 include_directories(${GLOG_INCLUDE_DIRS})
 link_libraries(${GLOG_LIBRARIES})
+
+# enable drawing plot
+add_subdirectory(third_party/matplotlib-cpp)
+include_directories(${PROJECT_SOURCE_DIR}/third_party/matplotlib-cpp)
+# Find Python headers
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+
+find_package(Pangolin REQUIRED)
 
 include_directories(
         include
         #${DJIOSDK_INCLUDE_DIRS}
         ${LIBUSB_1_INCLUDE_DIR}
         ${catkin_INCLUDE_DIRS}
+        ${Pangolin_INCLUDE_DIRS}
 )
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -182,6 +196,8 @@ target_link_libraries(fire_spots_visualization
 
 target_link_libraries(geo_positioning
         ${catkin_LIBRARIES}
+        matplotlib_cpp
+        ${Pangolin_LIBRARIES}
 )
 
 target_link_libraries(sync_gps_vision

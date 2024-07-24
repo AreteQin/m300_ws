@@ -22,6 +22,8 @@ rosrun forest_fire_geopositioning compress_video_node
 rosrun ORB_SLAM3 fire_localization /home/uav/ORB_SLAM3_Ubuntu_20/Vocabulary/ORBvoc.txt /home/uav/ORB_SLAM3_Ubuntu_20/Examples_old/Monocular-Inertial/M300.yaml _image_transport:=compressed
 
 # to test the dateset
+rosrun ORB_SLAM3 fire_localization /home/qin/ORB_SLAM3_Ubuntu_20/Vocabulary/ORBvoc.txt /home/qin/ORB_SLAM3_Ubuntu_20/Examples_old/Monocular-Inertial/M300.yaml _image_transport:=raw
+
 rosrun ORB_SLAM3 fire_localization /home/qin/ORB_SLAM3_Ubuntu_20/Vocabulary/ORBvoc.txt /home/qin/ORB_SLAM3_Ubuntu_20/Examples_old/Monocular/GoPro.yaml
 
 # to run the fire detection

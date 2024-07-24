@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh;
 
     // subscribe to the camera GPS
-    ros::Subscriber m300_GPS_sub = nh.subscribe("/dji_osdk_ros/gps_position", 1, CamCallback);
+    // ros::Subscriber m300_GPS_sub = nh.subscribe("/dji_osdk_ros/gps_position", 1, CamCallback);
     // subscribe to the fire GPS
     ros::Subscriber fire_spots_GPS_sub = nh.subscribe("/position/fire_spots_GPS", 1, FireCallback);
 
