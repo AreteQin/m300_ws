@@ -1,6 +1,3 @@
-//
-// Created by qin on 8/6/24.
-//
 #include <opencv2/core/core.hpp>
 #include <vector>
 #include <matplotlibcpp.h>
@@ -52,12 +49,12 @@ Eigen::Vector3d IEKF(const Eigen::Vector3d& x, const Eigen::Vector3d& y, const E
     {
         dh = H_jacobian(est_posterior);
         K = P * dh.transpose() * (dh * P * dh.transpose() + R).inverse();
-        est_posterior = est_posterior + K * (y - h_measure(est_posterior));
+        est_posterior = est_prior + K * (y - h_measure(est_posterior)-dh*(est_prior-est_posterior));
     }
     // posterior covariance
-    // P = P - K * dh * P;
-    P = (Eigen::Matrix3d::Identity() - K * dh) * P * (Eigen::Matrix3d::Identity() - K * dh).transpose() +
-        K * R * K.transpose();
+    P = P - K * dh * P;
+    // P = (Eigen::Matrix3d::Identity() - K * dh) * P * (Eigen::Matrix3d::Identity() - K * dh).transpose() +
+    //     K * R * K.transpose();
     return est_posterior;
 }
 
@@ -98,9 +95,9 @@ int main()
     LOG(INFO) << "The size of gps is: " << gps.size();
     LOG(INFO) << "The size of gps_calculated is: " << gps_calculated.size();
 
-    int iteration_times = 1;
+    int iteration_times = 5;
     Eigen::Matrix3d Q = Eigen::Matrix3d::Identity(); // state noise covariance
-    Eigen::Matrix3d R = 5*Eigen::Matrix3d::Identity(); // measurement noise covariance
+    Eigen::Matrix3d R = 5 * Eigen::Matrix3d::Identity(); // measurement noise covariance
     Eigen::Matrix3d P = Q;
     std::vector<Eigen::Vector3d> est_IEKF;
     std::vector<double> time_stamp;
