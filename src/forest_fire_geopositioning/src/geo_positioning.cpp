@@ -165,12 +165,12 @@ private:
         double distance_lat = x2 - x1;
         double distance_lon = y2 - y1;
         double distance_alt = z2 - z1;
-        double distance_GPS = sqrt(
+        double distance_ECEF = sqrt(
             distance_lat * distance_lat + distance_lon * distance_lon + distance_alt * distance_alt);
 
         // calculate the real scale
-        double real_scale = distance_GPS / distance;
-        LOG(INFO) << "The real scale: " << distance_GPS << " / " << distance << " = " << real_scale << ".";
+        double real_scale = distance_ECEF / distance;
+        LOG(INFO) << "The real scale: " << distance_ECEF << " / " << distance << " = " << real_scale << ".";
         // if (real_scale > 0.4)
         // {
         //     return;
@@ -187,7 +187,7 @@ private:
 
         // calculate the rotation matrix
         // Calculate the cross product of a and b
-        Eigen::Vector3d a = Eigen::Vector3d(
+        Eigen::Vector3d a = real_scale * Eigen::Vector3d(
             camera_trajectory_SLAM.back().pose.position.x - camera_trajectory_SLAM[origin_frame_index].pose.position.x,
             camera_trajectory_SLAM.back().pose.position.y - camera_trajectory_SLAM[origin_frame_index].pose.position.y,
             camera_trajectory_SLAM.back().pose.position.z - camera_trajectory_SLAM[origin_frame_index].pose.position.z);
@@ -206,8 +206,7 @@ private:
         Eigen::Matrix3d r = Eigen::Matrix3d::Identity(3, 3) + nx + nx * nx * ((1 - c) / (s * s));
         // calculate the camera pose in ecef coordinate system
         Eigen::Vector3d camera_pose_ECEF_calculated = r * a;
-        camera_pose_ECEF_calculated = camera_pose_ECEF_calculated.normalized() * real_scale * a.norm() +
-            Eigen::Vector3d(x1, y1, z1);
+        camera_pose_ECEF_calculated = camera_pose_ECEF_calculated.normalized() * a.norm() + Eigen::Vector3d(x1, y1, z1);
         double drone_lon, drone_lat, drone_alt;
         ECEF2GPS(camera_pose_ECEF_calculated[0], camera_pose_ECEF_calculated[1], camera_pose_ECEF_calculated[2],
                  drone_lat, drone_lon, drone_alt);
@@ -278,7 +277,8 @@ int main(int argc, char** argv)
     // draw all the fire spots in the 2D map in red and the drone in blue
     longitude.clear();
     latitude.clear();
-    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - 6666; i < geoPositioning.getFireSpotsGPS()->poses.size()
+    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - 6666; i < geoPositioning.getFireSpotsGPS()->poses.
+         size()
          ; i++)
     {
         longitude.push_back(geoPositioning.getFireSpotsGPS()->poses[i].position.y);
@@ -299,85 +299,41 @@ int main(int argc, char** argv)
     // plt::xlim(-73.9329, -73.9326);
     plt::show();
 
+    // store the all the fire spots position into a file with highest precision
+    std::ofstream file;
+    file.open("fire_spots_GPS.txt");
+    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - 600; i < geoPositioning.getFireSpotsGPS()->poses.
+         size()
+         ; i++)
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << geoPositioning.getFireSpotsGPS()->poses
+            [i].position.x << " " << geoPositioning.getFireSpotsGPS()->poses[i].position.y << " " <<
+            geoPositioning.getFireSpotsGPS()->poses[i].position.z << std::endl;
+    }
+    file.close();
+
+    // store all the camera poses in GPS coordinate system into a file
+    file.open("camera_poses_GPS.txt");
+    for (const sensor_msgs::NavSatFix& camera_GPS : *geoPositioning.getCameraPosesGPS())
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << camera_GPS.latitude << " " <<
+            camera_GPS.longitude << " " << camera_GPS.altitude << std::endl;
+    }
+    file.close();
+
+    // store all the camera poses in GPS coordinate system calculated into a file
+    file.open("camera_poses_GPS_calculated.txt");
+    for (const Eigen::Vector3d& camera_GPS_calculated : *geoPositioning.getCameraPosesGPSCalculated())
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << camera_GPS_calculated[0] << " " <<
+            camera_GPS_calculated[1] << " " << camera_GPS_calculated[2] << std::endl;
+    }
+    file.close();
+
     // plot the distribution of the real scale
     LOG(INFO) << "The number of real scales: " << geoPositioning.getRealScales()->size() << ".";
     plt::hist(*geoPositioning.getRealScales(), 100);
     plt::show();
-
-    // // draw in SLAM coordinate system
-    // longitude.clear();
-    // latitude.clear();
-    // for (int i = 0; i < geoPositioning.getCameraPosesSLAM()->size(); i++)
-    // {
-    //     longitude.push_back(geoPositioning.getCameraPosesSLAM()->at(i).pose.position.x);
-    //     latitude.push_back(geoPositioning.getCameraPosesSLAM()->at(i).pose.position.y);
-    // }
-    // // draw with green color
-    // plt::plot(longitude, latitude, "go");
-    // longitude.clear();
-    // latitude.clear();
-    // for (int i = 0; i < geoPositioning.getFireSpotsSLAM()->poses.size(); i++)
-    // {
-    //     longitude.push_back(geoPositioning.getFireSpotsSLAM()->poses[i].position.x);
-    //     latitude.push_back(geoPositioning.getFireSpotsSLAM()->poses[i].position.y);
-    // }
-    // // draw with yellow color
-    // plt::plot(longitude, latitude, "yo");
-    // plt::show();
-
-    // // Create a window and bind its context to the main thread
-    // pangolin::CreateWindowAndBind("Main", 640, 480);
-    //
-    // // Enable depth testing
-    // glEnable(GL_DEPTH_TEST);
-    //
-    // // Define Projection and initial ModelView matrix
-    // pangolin::OpenGlRenderState s_cam(
-    //     pangolin::ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.2, 100),
-    //     pangolin::ModelViewLookAt(0, -1, -3, 0, 0, 0, pangolin::AxisY)
-    // );
-    //
-    // // Create Interactive View in window
-    // pangolin::View& d_cam = pangolin::CreateDisplay()
-    //                         .SetBounds(0.0, 1.0, pangolin::Attach::Pix(175), 1.0, -640.0f / 480.0f)
-    //                         .SetHandler(new pangolin::Handler3D(s_cam));
-    //
-    //
-    // // Change background color to white
-    // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    //
-    // // Main loop
-    // while (!pangolin::ShouldQuit())
-    // {
-    //     // Clear entire screen
-    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //
-    //     // Activate efficiently by object
-    //     d_cam.Activate(s_cam);
-    //
-    //     // Define some 3D points
-    //     glBegin(GL_POINTS);
-    //     // draw the fire spots in the 3D map in red and the drone in green in SLAM coordinate system
-    //     for (int i = 0; i < geoPositioning.getCameraPosesSLAM()->size(); i++)
-    //     {
-    //         glVertex3d(geoPositioning.getCameraPosesSLAM()->at(i).pose.position.x,
-    //                    geoPositioning.getCameraPosesSLAM()->at(i).pose.position.y,
-    //                    geoPositioning.getCameraPosesSLAM()->at(i).pose.position.z);
-    //         glColor3f(0.0, 1.0, 0.0);
-    //     }
-    //     for (int i = 0; i < geoPositioning.getFireSpotsSLAM()->poses.size(); i++)
-    //     {
-    //         glVertex3d(geoPositioning.getFireSpotsSLAM()->poses[i].position.x,
-    //                    geoPositioning.getFireSpotsSLAM()->poses[i].position.y,
-    //                    geoPositioning.getFireSpotsSLAM()->poses[i].position.z);
-    //         glColor3f(1.0, 0.0, 0.0);
-    //     }
-    //
-    //     glEnd();
-    //
-    //     // Swap frames and Process Events
-    //     pangolin::FinishFrame();
-    // }
 
     return 0;
 }

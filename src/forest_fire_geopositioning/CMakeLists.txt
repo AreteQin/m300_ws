@@ -220,6 +220,14 @@ target_link_libraries(geo_positioning
         ${catkin_LIBRARIES}
 )
 
+add_executable(iekf src/iekf.cpp)
+target_link_libraries(iekf
+        matplotlib_cpp
+        Eigen3::Eigen
+        ${GLOG_LIBRARIES}
+)
+
+
 #############
 ## Install ##
 #############
