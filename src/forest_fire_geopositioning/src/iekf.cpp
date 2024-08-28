@@ -5,6 +5,7 @@
 #include <fstream>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <iomanip>
 
 namespace plt = matplotlibcpp;
 
@@ -36,23 +37,25 @@ Eigen::Vector3d IEKF(const Eigen::Vector3d& x, const Eigen::Vector3d& y, const E
     // predict
     // prior estimate
     Eigen::Vector3d est_prior = f_process(x);
-    Eigen::Matrix3d df = F_jacobian(est_prior);
-    Eigen::Matrix3d dh = H_jacobian(est_prior);
+    Eigen::Matrix3d F = F_jacobian(est_prior);
+    Eigen::Matrix3d H = H_jacobian(est_prior);
     // prior covariance
-    P = df * P * df.transpose() + Q;
+    P = F * P * F.transpose() + Q;
     // update
     // kalman gain
-    Eigen::Matrix3d K = P * dh.transpose() * (dh * P * dh.transpose() + R).inverse();
+    Eigen::Matrix3d K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
     // posterior estimate
     Eigen::Vector3d est_posterior = est_prior + K * (y - h_measure(est_prior));
     for (int j = 0; j < iteration_times; j++)
     {
-        dh = H_jacobian(est_posterior);
-        K = P * dh.transpose() * (dh * P * dh.transpose() + R).inverse();
-        est_posterior = est_prior + K * (y - h_measure(est_posterior)-dh*(est_prior-est_posterior));
+        H = H_jacobian(est_posterior);
+        K = P * H.transpose() * (H * P * H.transpose() + R).inverse();
+        est_posterior = est_prior + K * (y - h_measure(est_posterior)-H*(est_prior-est_posterior));
+        // print the output with high precision
+        // std::cout << std::setprecision(10) << "The estimated position is: " << est_posterior.transpose() << std::endl;
     }
     // posterior covariance
-    P = P - K * dh * P;
+    P = P - K * H * P;
     // P = (Eigen::Matrix3d::Identity() - K * dh) * P * (Eigen::Matrix3d::Identity() - K * dh).transpose() +
     //     K * R * K.transpose();
     return est_posterior;
@@ -95,7 +98,7 @@ int main()
     LOG(INFO) << "The size of gps is: " << gps.size();
     LOG(INFO) << "The size of gps_calculated is: " << gps_calculated.size();
 
-    int iteration_times = 5;
+    int iteration_times = 50;
     Eigen::Matrix3d Q = Eigen::Matrix3d::Identity(); // state noise covariance
     Eigen::Matrix3d R = 5 * Eigen::Matrix3d::Identity(); // measurement noise covariance
     Eigen::Matrix3d P = Q;

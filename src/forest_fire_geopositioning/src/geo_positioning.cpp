@@ -226,9 +226,9 @@ private:
             Eigen::Vector3d fire_gps;
             ECEF2GPS(fire_ecef[0], fire_ecef[1], fire_ecef[2], fire_gps[0], fire_gps[1], fire_gps[2]);
             geometry_msgs::Pose pose;
-            pose.position.x = fire_gps[0];
-            pose.position.y = fire_gps[1];
-            pose.position.z = fire_gps[2];
+            pose.position.x = fire_gps[0] + 0.000035;
+            pose.position.y = fire_gps[1] - 0.00004;
+            pose.position.z = fire_gps[2] - 19;
             fire_spots_GPS.poses.push_back(pose);
         }
         // publish the GPS positions of fire spots
@@ -277,7 +277,8 @@ int main(int argc, char** argv)
     // draw all the fire spots in the 2D map in red and the drone in blue
     longitude.clear();
     latitude.clear();
-    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - 6666; i < geoPositioning.getFireSpotsGPS()->poses.
+    int points_kept = 6000;
+    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - points_kept; i < geoPositioning.getFireSpotsGPS()->poses.
          size()
          ; i++)
     {
@@ -301,8 +302,8 @@ int main(int argc, char** argv)
 
     // store the all the fire spots position into a file with highest precision
     std::ofstream file;
-    file.open("fire_spots_GPS.txt");
-    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - 600; i < geoPositioning.getFireSpotsGPS()->poses.
+    file.open("01_fire_spots_GPS.txt");
+    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - points_kept; i < geoPositioning.getFireSpotsGPS()->poses.
          size()
          ; i++)
     {
@@ -313,7 +314,7 @@ int main(int argc, char** argv)
     file.close();
 
     // store all the camera poses in GPS coordinate system into a file
-    file.open("camera_poses_GPS.txt");
+    file.open("02_camera_poses_GPS.txt");
     for (const sensor_msgs::NavSatFix& camera_GPS : *geoPositioning.getCameraPosesGPS())
     {
         file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << camera_GPS.latitude << " " <<
@@ -322,7 +323,7 @@ int main(int argc, char** argv)
     file.close();
 
     // store all the camera poses in GPS coordinate system calculated into a file
-    file.open("camera_poses_GPS_calculated.txt");
+    file.open("03_camera_poses_GPS_calculated.txt");
     for (const Eigen::Vector3d& camera_GPS_calculated : *geoPositioning.getCameraPosesGPSCalculated())
     {
         file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << camera_GPS_calculated[0] << " " <<
@@ -334,6 +335,13 @@ int main(int argc, char** argv)
     LOG(INFO) << "The number of real scales: " << geoPositioning.getRealScales()->size() << ".";
     plt::hist(*geoPositioning.getRealScales(), 100);
     plt::show();
+    // store all the scales into a file
+    file.open("04_real_scales.txt");
+    for (double scale : *geoPositioning.getRealScales())
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << scale << std::endl;
+    }
+    file.close();
 
     return 0;
 }
