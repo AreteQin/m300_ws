@@ -80,11 +80,6 @@ public:
         return &camera_trajectory_GPS;
     }
 
-    geometry_msgs::PoseArray* getFireSpotsSLAM()
-    {
-        return &fire_spots_SLAM;
-    }
-
     geometry_msgs::PoseArray* getFireSpotsGPS()
     {
         return &fire_spots_GPS;
@@ -100,6 +95,13 @@ public:
         return &real_scales;
     }
 
+    std::vector<Eigen::Vector3d> getAverageFireSpotsGPS()
+    {
+        return fire_spots_GPS_average;
+    }
+
+    const int origin_frame_index = 800;
+
 private:
     ros::Publisher real_scale_pub, fire_spots_GPS_pub;
     message_filters::Subscriber<geometry_msgs::PoseArray> fire_spots_sub;
@@ -113,16 +115,15 @@ private:
     std::vector<sensor_msgs::NavSatFix> camera_trajectory_GPS;
     geometry_msgs::PoseArray fire_spots_SLAM;
     geometry_msgs::PoseArray fire_spots_GPS;
-    std::vector<Eigen::Vector3d> camera_trajectory_GPS_calculated;
+    std::vector<Eigen::Vector3d> camera_trajectory_GPS_calculated, fire_spots_GPS_average;
     std::vector<double> real_scales;
     double scales_sum = 0;
-    int origin_frame_index = 800;
 
     void callback(const geometry_msgs::PoseArrayConstPtr& fire_spots_msg,
                   const geometry_msgs::PoseStampedConstPtr& camera_pose_msg,
                   const sensor_msgs::NavSatFixConstPtr& GPS_msg)
     {
-        LOG(INFO) << "The number of fire spots: " << fire_spots_msg->poses.size() << ".";
+        // LOG(INFO) << "The number of fire spots: " << fire_spots_msg->poses.size() << ".";
         // store camera pose
         //    if (rest_map) {
         //        camera_poses_SLAM.clear();
@@ -133,14 +134,19 @@ private:
         camera_trajectory_GPS.push_back(*GPS_msg);
 
         LOG(INFO) << "Total number of camera poses: " << camera_trajectory_SLAM.size() << ".";
-        LOG(INFO) << "Total number of GPS positions: " << camera_trajectory_GPS.size() << ".";
+        // LOG(INFO) << "Total number of GPS positions: " << camera_trajectory_GPS.size() << ".";
 
         // print the latest camera pose and gps
-        std::cout << std::setprecision(std::numeric_limits<double>::digits10 + 1) << "The latest camera pose: " <<
-            camera_pose_msg->pose.position.x << ", "
-            << camera_pose_msg->pose.position.y << ", " << camera_pose_msg->pose.position.z << std::endl;
-        std::cout << "The latest GPS position: " << GPS_msg->latitude << ", " << GPS_msg->longitude << ", "
-            << GPS_msg->altitude << std::endl;
+        // std::cout << std::setprecision(std::numeric_limits<double>::digits10 + 1) << "The latest camera pose: " <<
+        //     camera_pose_msg->pose.position.x << ", "
+        //     << camera_pose_msg->pose.position.y << ", " << camera_pose_msg->pose.position.z << std::endl;
+        // std::cout << "The latest GPS position: " << GPS_msg->latitude << ", " << GPS_msg->longitude << ", "
+        //     << GPS_msg->altitude << std::endl;
+
+        // time interval between the current frame and the last frame
+        double time_interval = camera_trajectory_SLAM.back().header.stamp.toSec() - camera_trajectory_SLAM[
+            camera_trajectory_SLAM.size() - 2].header.stamp.toSec();
+        LOG(INFO)<< "The time consumed by SLAM: " << time_interval << " seconds.";
 
         // calculate the real scale
         if (camera_trajectory_SLAM.size() < origin_frame_index * 1.1)
@@ -170,11 +176,7 @@ private:
 
         // calculate the real scale
         double real_scale = distance_ECEF / distance;
-        LOG(INFO) << "The real scale: " << distance_ECEF << " / " << distance << " = " << real_scale << ".";
-        // if (real_scale > 0.4)
-        // {
-        //     return;
-        // }
+        // LOG(INFO) << "The real scale: " << distance_ECEF << " / " << distance << " = " << real_scale << ".";
         real_scales.push_back(real_scale);
         // calculate the average real scale
         scales_sum += real_scale;
@@ -233,7 +235,25 @@ private:
         }
         // publish the GPS positions of fire spots
         fire_spots_GPS_pub.publish(fire_spots_GPS);
-        fire_spots_SLAM = *fire_spots_msg;
+
+        // calculate the average of last 600 fire spots
+        if (fire_spots_GPS.poses.size() > 600 && camera_trajectory_GPS_calculated.size() > 120)
+        {
+            double latitude = 0;
+            double longitude = 0;
+            double altitude = 0;
+            for (int i = fire_spots_GPS.poses.size() - 600; i < fire_spots_GPS.poses.size(); i++)
+            {
+                latitude += fire_spots_GPS.poses[i].position.x;
+                longitude += fire_spots_GPS.poses[i].position.y;
+                altitude += fire_spots_GPS.poses[i].position.z;
+            }
+            latitude /= 600;
+            longitude /= 600;
+            altitude /= 600;
+            Eigen::Vector3d fire_spot_GPS_average(latitude, longitude, altitude);
+            fire_spots_GPS_average.push_back(fire_spot_GPS_average);
+        }
     }
 };
 
@@ -274,6 +294,17 @@ int main(int argc, char** argv)
     longitude.push_back(-73.932890364);
     plt::plot(longitude, latitude, "ro");
 
+    // calculate the average location of the ground truth of fire spots
+    double latitude_avg = 0;
+    double longitude_avg = 0;
+    for (int i = 0; i < latitude.size(); i++)
+    {
+        latitude_avg += latitude[i];
+        longitude_avg += longitude[i];
+    }
+    latitude_avg /= latitude.size();
+    longitude_avg /= longitude.size();
+
     // draw all the fire spots in the 2D map in red and the drone in blue
     longitude.clear();
     latitude.clear();
@@ -298,6 +329,39 @@ int main(int argc, char** argv)
     plt::plot(longitude, latitude, "yo");
     // plt::ylim(45.4578, 45.4581);
     // plt::xlim(-73.9329, -73.9326);
+    plt::show();
+
+    // calculate the difference between the average location of the ground truth of fire spots and the average location
+    // of the fire spots calculated
+    std::vector<double> ALEs,t;
+    for (int i = 0; i < geoPositioning.getAverageFireSpotsGPS().size(); i++)
+    {
+        double latitude_diff = geoPositioning.getAverageFireSpotsGPS()[i][0] - latitude_avg;
+        double longitude_diff = geoPositioning.getAverageFireSpotsGPS()[i][1] - longitude_avg;
+        double ATE = sqrt(latitude_diff * latitude_diff + longitude_diff * longitude_diff);
+        ALEs.push_back(ATE);
+        t.push_back(i);
+    }
+    // draw the ATE over time
+    plt::plot(t, ALEs);
+
+    // calculate the ATE between GPS of drone and calculated GPS of drone
+    std::vector<double> ATEs;
+    t.clear();
+    int sizes_difference = geoPositioning.getCameraPosesGPS()->size() - geoPositioning.getCameraPosesGPSCalculated()->
+        size();
+    for (int i = 0; i < geoPositioning.getCameraPosesGPSCalculated()->size(); i++)
+    {
+        t.push_back(i);
+        double latitude_diff = geoPositioning.getCameraPosesGPS()->at(i+sizes_difference).latitude -
+            geoPositioning.getCameraPosesGPSCalculated()->at(i)[0];
+        double longitude_diff = geoPositioning.getCameraPosesGPS()->at(i+sizes_difference).longitude -
+            geoPositioning.getCameraPosesGPSCalculated()->at(i)[1];
+        double ATE = sqrt(latitude_diff * latitude_diff + longitude_diff * longitude_diff);
+        ATEs.push_back(ATE);
+    }
+    // draw the ATE over time
+    plt::plot(t, ATEs);
     plt::show();
 
     // store the all the fire spots position into a file with highest precision
@@ -342,6 +406,41 @@ int main(int argc, char** argv)
         file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << scale << std::endl;
     }
     file.close();
+
+    // store the ALE to a file
+    file.open("05_ALE.txt");
+    for (double ALE : ALEs)
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << ALE << std::endl;
+    }
+    file.close();
+
+    // store the ATE to a file
+    file.open("06_ATE.txt");
+    for (double ATE : ATEs)
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << ATE << std::endl;
+    }
+    file.close();
+
+    // store all average fire spots into a file
+    file.open("07_average_fire_spots_GPS.txt");
+    for (const Eigen::Vector3d& fire_spot_GPS_average : geoPositioning.getAverageFireSpotsGPS())
+    {
+        file << std::setprecision(std::numeric_limits<double>::digits10 + 1) << fire_spot_GPS_average[0] << " " <<
+            fire_spot_GPS_average[1] << " " << fire_spot_GPS_average[2] << std::endl;
+    }
+    file.close();
+
+    // calculate the whole time period from 1000th frame to the last frame
+    double time_period = geoPositioning.getCameraPosesGPS()->back().header.stamp.toSec() - geoPositioning.
+        getCameraPosesGPS()->at(1000).header.stamp.toSec();
+    LOG(INFO) << "The whole ATE time period: " << time_period << " seconds.";
+
+    // calculate the whole time period from 1000th frame to the last frame
+    time_period = geoPositioning.getCameraPosesGPS()->back().header.stamp.toSec() - geoPositioning.
+        getCameraPosesGPS()->at(1128).header.stamp.toSec();
+    LOG(INFO) << "The whole ALE time period: " << time_period << " seconds.";
 
     return 0;
 }
