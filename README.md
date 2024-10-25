@@ -2,15 +2,7 @@
 
 ## Dependencies
 ```bash
-sudo apt install ros-noetic-rosserial-msgs
-
-pip3 install pyserial
-
-sudo apt install ros-noetic-vision-msgs
-
-sudo apt install lib-google-glog-dev
-
-sudo apt install ros-noetic-nmea-msgs
+sudo apt install ros-noetic-rosserial-msgs ros-noetic-vision-msgs libgoogle-glog-dev ros-noetic-nmea-msgs
 ```
 
 ## Usage
