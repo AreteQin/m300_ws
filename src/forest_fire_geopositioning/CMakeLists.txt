@@ -171,7 +171,6 @@ add_executable(fire_spots_visualization src/fire_spots_visualization.cpp)
 add_executable(geo_positioning src/geo_positioning.cpp)
 add_executable(fire_subscriber src/fire_subscriber.cpp)
 add_executable(sync_gps_vision src/sync_gps_vision.cpp)
-add_executable(GPS_sub src/GPS_sub.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -209,10 +208,6 @@ target_link_libraries(fire_subscriber
         ${catkin_LIBRARIES}
 )
 
-target_link_libraries(GPS_sub
-        ${catkin_LIBRARIES}
-)
-
 add_dependencies(compress_video_node
         dji_osdk_ros_generate_messages_cpp)
 
@@ -227,6 +222,13 @@ target_link_libraries(iekf
         ${GLOG_LIBRARIES}
 )
 
+add_executable(GPS_visual_fusion src/GPS_visual_fusion.cpp)
+target_link_libraries(GPS_visual_fusion
+        matplotlib_cpp
+        Eigen3::Eigen
+        ${GLOG_LIBRARIES}
+        ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

@@ -148,7 +148,7 @@ private:
             camera_trajectory_SLAM.size() - 2].header.stamp.toSec();
         LOG(INFO)<< "The time consumed by SLAM: " << time_interval << " seconds.";
 
-        // calculate the real scale
+        // calculate the real scale until the 800th frame
         if (camera_trajectory_SLAM.size() < origin_frame_index * 1.1)
         {
             return;
