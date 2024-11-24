@@ -146,7 +146,7 @@ private:
         // time interval between the current frame and the last frame
         double time_interval = camera_trajectory_SLAM.back().header.stamp.toSec() - camera_trajectory_SLAM[
             camera_trajectory_SLAM.size() - 2].header.stamp.toSec();
-        LOG(INFO)<< "The time consumed by SLAM: " << time_interval << " seconds.";
+        LOG(INFO) << "The time consumed by SLAM: " << time_interval << " seconds.";
 
         // calculate the real scale until the 800th frame
         if (camera_trajectory_SLAM.size() < origin_frame_index * 1.1)
@@ -155,10 +155,10 @@ private:
         }
         // calculate the distance between the camera poses between the 800th and the last frame.
         double distance = Eigen::Vector3d(
-                camera_trajectory_SLAM.back().pose.position.y - camera_trajectory_SLAM[origin_frame_index].pose.position
-                .y,
                 camera_trajectory_SLAM.back().pose.position.x - camera_trajectory_SLAM[origin_frame_index].pose.position
                 .x,
+                camera_trajectory_SLAM.back().pose.position.y - camera_trajectory_SLAM[origin_frame_index].pose.position
+                .y,
                 camera_trajectory_SLAM.back().pose.position.z - camera_trajectory_SLAM[origin_frame_index].pose.position
                 .z).
             norm();
@@ -209,7 +209,7 @@ private:
         // calculate the camera pose in ecef coordinate system
         Eigen::Vector3d camera_pose_ECEF_calculated = r * a;
         camera_pose_ECEF_calculated = camera_pose_ECEF_calculated.normalized() * a.norm() + Eigen::Vector3d(x1, y1, z1);
-        double drone_lon, drone_lat, drone_alt;
+        double drone_lon, drone_lat, drone_alt; // todo: why not times real_scale
         ECEF2GPS(camera_pose_ECEF_calculated[0], camera_pose_ECEF_calculated[1], camera_pose_ECEF_calculated[2],
                  drone_lat, drone_lon, drone_alt);
         Eigen::Vector3d camera_pose_GPS_calculated(drone_lat, drone_lon, drone_alt);
@@ -309,7 +309,8 @@ int main(int argc, char** argv)
     longitude.clear();
     latitude.clear();
     int points_kept = 6000;
-    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - points_kept; i < geoPositioning.getFireSpotsGPS()->poses.
+    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - points_kept; i < geoPositioning.getFireSpotsGPS()->
+         poses.
          size()
          ; i++)
     {
@@ -333,7 +334,7 @@ int main(int argc, char** argv)
 
     // calculate the difference between the average location of the ground truth of fire spots and the average location
     // of the fire spots calculated
-    std::vector<double> ALEs,t;
+    std::vector<double> ALEs, t;
     for (int i = 0; i < geoPositioning.getAverageFireSpotsGPS().size(); i++)
     {
         double latitude_diff = geoPositioning.getAverageFireSpotsGPS()[i][0] - latitude_avg;
@@ -353,9 +354,9 @@ int main(int argc, char** argv)
     for (int i = 0; i < geoPositioning.getCameraPosesGPSCalculated()->size(); i++)
     {
         t.push_back(i);
-        double latitude_diff = geoPositioning.getCameraPosesGPS()->at(i+sizes_difference).latitude -
+        double latitude_diff = geoPositioning.getCameraPosesGPS()->at(i + sizes_difference).latitude -
             geoPositioning.getCameraPosesGPSCalculated()->at(i)[0];
-        double longitude_diff = geoPositioning.getCameraPosesGPS()->at(i+sizes_difference).longitude -
+        double longitude_diff = geoPositioning.getCameraPosesGPS()->at(i + sizes_difference).longitude -
             geoPositioning.getCameraPosesGPSCalculated()->at(i)[1];
         double ATE = sqrt(latitude_diff * latitude_diff + longitude_diff * longitude_diff);
         ATEs.push_back(ATE);
@@ -367,7 +368,8 @@ int main(int argc, char** argv)
     // store the all the fire spots position into a file with highest precision
     std::ofstream file;
     file.open("01_fire_spots_GPS.txt");
-    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - points_kept; i < geoPositioning.getFireSpotsGPS()->poses.
+    for (int i = geoPositioning.getFireSpotsGPS()->poses.size() - points_kept; i < geoPositioning.getFireSpotsGPS()->
+         poses.
          size()
          ; i++)
     {

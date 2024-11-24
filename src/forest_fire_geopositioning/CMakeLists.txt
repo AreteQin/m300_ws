@@ -42,12 +42,15 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 
 find_package(Pangolin REQUIRED)
 
+find_package(Boost REQUIRED)
+
 include_directories(
         include
         #${DJIOSDK_INCLUDE_DIRS}
         ${LIBUSB_1_INCLUDE_DIR}
         ${catkin_INCLUDE_DIRS}
         ${Pangolin_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
 )
 
 ## Uncomment this if the package has a setup.py. This macro ensures
