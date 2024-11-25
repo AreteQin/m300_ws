@@ -128,12 +128,14 @@ void callback(const geometry_msgs::PoseStampedConstPtr& camera_pose_msg,
             -v[1], v[0], 0;
         // Calculate the rotation matrix using the Rodrigues formula
         r = Eigen::Matrix3d::Identity(3, 3) + nx + nx * nx * ((1 - c) / (s * s));
+        LOG(INFO) << "The rotation matrix: " << std::setprecision(15) << r << ".";
+        Eigen::JacobiSVD<Eigen::Matrix3d> svd(r, Eigen::ComputeFullU | Eigen::ComputeFullV);
+        r = svd.matrixU() * svd.matrixV().transpose();
     }
     // convert the camera pose in inertial coordinate system to ECEF coordinate system
     Eigen::Vector3d camera_pose_ecef_calculated = r * (camera_poses_inertial.back() - camera_poses_inertial[
         origin_frame_index]);
-    camera_pose_ecef_calculated = camera_pose_ecef_calculated.normalized() * (camera_poses_inertial.back() -
-        camera_poses_inertial[origin_frame_index]).norm() * scale + translation;
+    camera_pose_ecef_calculated = camera_pose_ecef_calculated * scale+ translation;
     // convert the camera pose in ECEF coordinate system to GPS coordinate system
     double lat, lon, alt;
     ECEF2GPS(camera_pose_ecef_calculated[0], camera_pose_ecef_calculated[1], camera_pose_ecef_calculated[2],
